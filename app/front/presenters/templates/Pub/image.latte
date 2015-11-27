@@ -1,0 +1,39 @@
+{block title}
+    | Nahrávání fotek
+{/block}
+
+{block heading}
+    <h1 class="page-header">
+    	{if $pub}
+    		{$pub->wholeName}
+    	{/if}
+    </h1>
+{/block}
+
+
+{block content}
+
+    <div class="row">
+        <div class="col-lg-12">
+		    <h1 class="page-header">
+		    	{if $pub}
+		    		{$pub->wholeName}
+		    	{/if}
+		    </h1>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-lg-12">
+        	{if $pub}
+				{control imageForm}
+				<a href="{link Pub:detail id => $pub->id}" title="Detail restaurace {$pub->wholeName}" class="btn btn-info">Zpět</a>
+			{else}
+				<p class="alert alert-danger">Nebyla nalezena požadovaná restaurace</p>
+				<a href="{link Pub:default}" title="Seznam restaurací" class="btn btn-info">Zpět</a>
+			{/if}
+        </div>
+    </div>	     
+
+{/block}

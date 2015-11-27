@@ -1,0 +1,5 @@
+app/config/config.local.neon
+upload.bat
+log/*
+temp/*
+www/images/pubs/*

@@ -1,0 +1,115 @@
+{layout 'default.latte'}
+
+{block title}
+    | Žebříček | Vše
+{/block}
+
+{block container_class}
+container-fluid
+{/block}
+
+{block main-content-row}
+    {block content-column}
+        <div class="col-lg-12">
+    		{include content}
+        </div>
+    {/block}
+{/block}
+
+{block ladderRow}
+	<div class="row">
+		<div class="col-lg-12 overflow-x">
+			<table class="table table-striped" n:snippet="pubs">
+				<thead>
+					<tr>
+						<th>#</th>
+						<th>{include orderLink name => "Známka",		title => "Seřadit podle celkového hodnocení", 	sort => 1}</th>
+						<th>{include orderLink name => "Jméno",			title => "Seřadit podle jména", 				sort => 2}</th>
+						<th>{include orderLink name => "Místo",			title => "Seřadit podle místa", 				sort => 3}</th>
+						<th>{include orderLink name => "Pivo",			title => "Seřadit podle piva", 					sort => 4}</th>
+						<th>{include orderLink name => "Cena piva",		title => "Seřadit podle ceny piva", 			sort => 4}</th>
+						<th>{include orderLink name => "Víno",			title => "Seřadit podle vína", 					sort => 6}</th>
+						<th>{include orderLink name => "Cena vína",		title => "Seřadit podle průměrné ceny vína", 	sort => 7}</th>
+						<th>{include orderLink name => "Jídlo",			title => "Seřadit podle jídla", 				sort => 8}</th>
+						<th>{include orderLink name => "Interiér",		title => "Seřadit podle dojmu z interiéru",		sort => 13}</th>
+						<th>{include orderLink name => "Exteriér",		title => "Seřadit podle dojmu z exteriéru",		sort => 14}</th>
+						<th>{include orderLink name => "Toalety",		title => "Seřadit podle toalet", 				sort => 9}</th>
+						<th>{include orderLink name => "Personál",		title => "Seřadit podle personálu", 			sort => 10}</th>
+						<th>{include orderLink name => "Celkový dojem",	title => "Seřadit podle celkového dojmu", 		sort => 11}</th>
+						<th>{include orderLink name => "Celková cena",	title => "Seřadit podle celkové ceny", 			sort => 12}</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr n:foreach="$pubs as $pub">
+						<td>{( $presenter["paginator"]->getPaginator()->page - 1 ) * $presenter["paginator"]->getPaginator()->itemsPerPage + $iterator->counter}</td>
+
+						<td>{control rating ratio => $pub->mark}</td>
+
+
+						<td><a href="{link Pub:detail, id => $pub->id}" title="{$pub->wholeName} detaily">{$pub->wholeName}</a></td>
+						<td>{$pub->location}</td>
+						
+						<td>
+							{control rating ratio => $pub->beerMark}
+							<span class="badge badge-rating" title="Hodnoceno {$pub->beerMarkVoted}x" n:if="$pub->beerMarkVoted">{$pub->beerMarkVoted}</span>
+						</td>
+						<td>
+						{*
+							{if $pub->beerPrice !== NULL && count($pub->beerPrice)}
+								<span title="{$pub->beerPrice|number:2} kč">{$pub->beerPrice|number:0} kč</span>
+								<span class="badge badge-rating" title="Hodnoceno {$pub->beerPriceVoted}x" n:if="$pub->beerPriceVoted">{$pub->beerPriceVoted}</span>
+								{$pub->beerPrice[array_keys($pub->beerPrice)[0]]} kč
+
+							{else}
+								-
+							{/if}
+						*}
+						-
+						</td>
+						<td>
+							{control rating ratio => $pub->wineMark}
+							<span class="badge badge-rating" title="Hodnoceno {$pub->wineMarkVoted}x" n:if="$pub->wineMarkVoted">{$pub->wineMarkVoted}</span>
+						</td>
+						<td>
+							{if $pub->winePrice !== NULL}
+								<span title="{$pub->winePrice|number:2} kč">{$pub->winePrice|number:0} kč</span>
+								<span class="badge badge-rating" title="Hodnoceno {$pub->winePriceVoted}x" n:if="$pub->winePriceVoted">{$pub->winePriceVoted}</span>
+							{else}
+								-
+							{/if}
+						</td>
+						<td>
+							{control rating ratio => $pub->foodMark}
+							<span class="badge badge-rating" title="Hodnoceno {$pub->foodMarkVoted}x" n:if="$pub->foodMarkVoted">{$pub->foodMarkVoted}</span>
+						</td>
+						<td>
+							{control rating ratio => $pub->interierMark}
+							<span class="badge badge-rating" title="Hodnoceno {$pub->markVoted}x" n:if="$pub->markVoted">{$pub->markVoted}</span>
+						</td>
+						<td>
+							{control rating ratio => $pub->exterierMark}
+							<span class="badge badge-rating" title="Hodnoceno {$pub->markVoted}x" n:if="$pub->markVoted">{$pub->markVoted}</span>
+						</td>
+						<td>
+							{control rating ratio => $pub->toaletsMark}
+							<span class="badge badge-rating" title="Hodnoceno {$pub->markVoted}x" n:if="$pub->markVoted">{$pub->markVoted}</span>
+						</td>
+						<td>
+							{control rating ratio => $pub->serviceMark}
+							<span class="badge badge-rating" title="Hodnoceno {$pub->markVoted}x" n:if="$pub->markVoted">{$pub->markVoted}</span>
+						</td>
+						<td>
+							{control rating ratio => $pub->overallMark}
+							<span class="badge badge-rating" title="Hodnoceno {$pub->markVoted}x" n:if="$pub->markVoted">{$pub->markVoted}</span>
+						</td>
+						<td>
+							{control rating ratio => $pub->foodPrice}
+							<span class="badge badge-rating" title="Hodnoceno {$pub->foodPriceVoted}x" n:if="$pub->foodPriceVoted">{$pub->foodPriceVoted}</span>
+						</td>
+
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+{/block}

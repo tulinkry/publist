@@ -1,0 +1,115 @@
+{layout 'default.latte'}
+
+
+{block title}
+    | Žebříček | Modal windows
+{/block}
+
+{block container_class}
+container
+{/block}
+
+{block ladderTable}
+	<table class="table table-striped" n:snippet="pubs">
+		<thead>
+			<tr>
+				<th>#</th>
+				<th>{include orderLink name => "Známka",		title => "Seřadit podle celkového hodnocení", 	sort => 1}</th>
+				<th>{include orderLink name => "Jméno",			title => "Seřadit podle jména", 				sort => 2}</th>
+				<th>{include orderLink name => "Místo",			title => "Seřadit podle místa", 				sort => 3}</th>
+				</tr>
+		</thead>
+
+
+		<tbody>
+			<tr n:foreach="$pubs as $pub" data-toggle="modal" data-target="#pubModal-{$pub->id}">
+				<td>{( $presenter["paginator"]->getPaginator()->page - 1 ) * $presenter["paginator"]->getPaginator()->itemsPerPage + $iterator->counter}</td>
+
+				<td>{control rating ratio => $pub->mark}</td>
+
+
+				<td><a href="{link Pub:detail, id => $pub->id}" title="{$pub->wholeName} detaily">{$pub->wholeName}</a></td>
+				<td>{$pub->location}</td>
+				
+			</tr>
+		</tbody>
+	</table>
+
+	<div  n:foreach="$pubs as $pub" class="modal fade" id="pubModal-{$pub->id}" tabindex="-1" role="dialog" aria-labelledby="pubModalLabel-{$pub->id}">
+	  <div class="modal-dialog" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	        <h1 class="modal-title" id="pubModalLabel-{$pub->id}">{$pub -> name}</h1>
+	      </div>
+	      <div class="modal-body">
+	        <h3>{$pub->location}</h3>
+	        <p>{$pub->long_name}</p>
+	        <table class="table table-condensed">
+	        	<tr>
+		        	<th>Interiér</th>
+		        	<td>
+		        		{control rating ratio => $pub->interierMark}
+					</td>
+					<td>
+						<span n:if="$pub->markVoted" class="label label-success">{$pub->markVoted}x hodnoceno</span>
+					</td>
+	        	</tr>
+	        	<tr>
+		        	<th>Exteriér</th>
+		        	<td>
+		        		{control rating ratio => $pub->exterierMark}
+					</td>
+					<td>
+						<span n:if="$pub->markVoted" class="label label-success">{$pub->markVoted}x hodnoceno</span>
+					</td>
+				</tr>
+				<tr>
+		        	<th>Toalety</th>
+					<td>
+						{control rating ratio => $pub->toaletsMark}
+					</td>
+					<td>
+						<span n:if="$pub->markVoted" class="label label-success">{$pub->markVoted}x hodnoceno</span>
+					</td>
+				</tr>
+				<tr>
+		        	<th>Personál</th>
+					<td>
+						{control rating ratio => $pub->serviceMark}
+					</td>
+					<td>
+						<span n:if="$pub->markVoted" class="label label-success">{$pub->markVoted}x hodnoceno</span>
+					</td>
+				</tr>
+				<tr>
+		        	<th>Spokojenost s cenou</th>
+					<td>
+						{control rating ratio => $pub->foodPrice}
+					</td>
+					<td>
+						<span n:if="$pub->markVoted" class="label label-success">{$pub->markVoted}x hodnoceno</span>
+					</td>
+				</tr>
+				<tr>
+		        	<th>Celkový dojem</th>
+					<td>
+						{control rating ratio => $pub->overallMark}
+					</td>
+					<td>
+						<span n:if="$pub->markVoted" class="label label-success">{$pub->markVoted}x hodnoceno</span>
+					</td>
+				</tr>
+	        </table>
+	        {*control map-$pub->id*}
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+
+
+
+{/block}

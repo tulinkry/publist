@@ -1,0 +1,63 @@
+{block content}
+    <div class="row">
+        <div class="col-lg-12">
+			<h1>Cron</h1>
+        </div>
+    </div>
+
+    <div class="row">
+		<div class="col-lg-12">
+			{if}
+				<div class="panel-group" n:snippet="emails">
+			        <div n:foreach="$emails as $email" class="panel panel-default" >
+			            <div class="panel-heading accordion-toggle" 
+			            	data-toggle="collapse" 
+			            	data-parent="#{$presenter->getSnippetId('emails')}" 
+			            	data-target="#collapse-{$email->id}">
+			                    <h4 class="panel-title">
+									<span class="col-xs-1">
+										{$email->id}.
+									</span>
+									<span class="col-xs-4">
+				                        {if !$email->seen}<b>{/if}
+										{$email->subject}
+										{if !$email->seen}</b>{/if}
+			                        </span>
+			                        <span class="col-xs-4 xtra">
+			                        	{foreach $email->from as $sender}
+			                        		{if $sender->personal}
+				                        		{$sender->personal}
+				                        	{/if}
+				                        	{if $sender->personal}{$v='<'}{/if}{$sender->mailbox}@{$sender->host}{if $sender->personal}{$v='>'}{/if}
+			                        	{/foreach}
+			                        </span>
+			                        <span class="col-xs-2 xtra">
+			                        	{$email->date|date: 'j. n. Y'}
+			                        </span>
+			                        <span class="col-xs-1 xtra">
+			                        	{$email->size|bytes}
+			                        </span>
+			                        <div class="clearfix"></div>
+			                    </h4>
+			            </div>
+			            <div id="collapse-{$email->id}" class="panel-collapse collapse">
+			      			<div class="panel-body">
+				                <pre>{$email->message->plain}</pre>							        
+			                </div>
+			            </div>
+			        </div>
+			      
+			    </div>
+				
+				{snippet paginator}
+				{control paginator}
+				{/snippet}
+			{else}
+				<h3>Žádné akce ke zpracování</h3>
+			{/if count($emails) > 0}
+		</div>
+	</div>
+
+{/block}
+
+

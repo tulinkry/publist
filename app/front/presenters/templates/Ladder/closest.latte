@@ -1,0 +1,104 @@
+{layout 'default.latte'}
+
+{block title}
+    | Žebříček | Nejbližší
+{/block}
+
+{block ladderTable}
+	
+	<div class="info">
+	</div>
+
+	<h3>Zjistit aktuální polohu</h3>
+	<a href={link location!} class="btn btn-info" data-toggle="location">Získat aktuální polohu</a>
+	<h3>Zadat souřadnice ručně</h3>
+	{control coordsForm}
+
+	<hr />
+
+	{if isset($pubs) && count($pubs) > 0}
+		<table class="table table-striped" n:snippet="pubs">
+
+			<thead>
+				<tr>
+					<th>#</th>
+					<th>{include orderLink name => "Známka",		title => "Seřadit podle celkového hodnocení", 				sort => 1}</th>
+					<th>{include orderLink name => "Jméno",			title => "Seřadit podle jména", 							sort => 2}</th>
+					<th>{include orderLink name => "Místo",			title => "Seřadit podle místa", 							sort => 3}</th>
+					<th>{include orderLink name => "Cena",			title => "Seřadit podle spokojenost s cenou", 				sort => 8}</th>
+					<th>{include orderLink name => "Vzdálenost",	title => "Seřadit podle vzdálenosti k aktuální poloze",		sort => 15}</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr n:foreach="$pubs as $pub">
+					<td>{( $presenter["paginator"]->getPaginator()->page - 1 ) * $presenter["paginator"]->getPaginator()->itemsPerPage + $iterator->counter}</td>
+
+					<td>{control rating ratio => $pub->mark} <span class="badge badge-rating">{count($pub->ratings)}</span></td>
+
+
+					<td><a href="{link Pub:detail, id => $pub->id}" title="{$pub->wholeName} detaily">{$pub->wholeName}</a></td>
+					<td>{$pub->location}</td>
+					
+					<td>
+						{control rating ratio => $pub->foodPrice}
+						<span class="badge badge-rating" title="Hodnoceno {$pub->markVoted}x" n:if="$pub->markVoted">{$pub->markVoted}</span>
+					</td>
+					<td>
+		            	{if $isMobile}
+		            		{if $isAndroid}
+			            		<a href="https://maps.google.com?saddr={$lat},{$lng}&daddr={$pub->latitude},{$pub->longitude}" target="_blank">{$distances[$pub->id]|metres}</a>
+			            		{*<a href="geo:{$lat},{$lng}?saddr=({$lat},{$lng})&daddr=({$pub->latitude},{$pub->longitude})">{$distances[$pub->id]|metres}</a>*}
+		            		{elseif $isIOS}
+			            		<a href="maps://maps.google.com?saddr={$lat},{$lng}&daddr={$pub->latitude},{$pub->longitude}">{$distances[$pub->id]|metres}</a>
+		            		{/if}
+		            	{else}
+		            		<a href="https://maps.google.com?saddr={$lat},{$lng}&daddr={$pub->latitude},{$pub->longitude}" target="_blank">{$distances[$pub->id]|metres}</a>
+		            	{/if}
+					</td>
+
+
+				</tr>
+			</tbody>
+		</table>
+
+		<a href="{link Ladder:closestMap lat => $lat, lng => $lng}" class="btn btn-primary">Zobrazit na mapě</a>
+	{else}
+		<h3>Žádné záznamy</h3>
+	{/if}
+
+
+	{if $lat === null || $lng === null}
+		<script>
+			if (navigator.geolocation) {
+		        navigator.geolocation.getCurrentPosition(function ( position ) {
+					
+					$.nette.ajax ({ 
+						url: {link location!} + "&lat=" + position.coords.latitude + "&lng=" + position.coords.longitude,
+					},
+					$('body'),
+					jQuery.Event( "click" )) . error ( function () {
+						var $div = $("div.info")
+						$div.removeClass()
+						$div.addClass("info alert alert-danger")
+						$div.empty();
+						$div.html("Nepodařilo se kontaktovat server.")
+					});
+
+		        }, function ( error ) {
+					var $div = $("div.info")
+					$div.removeClass()
+					$div.addClass("info alert alert-danger")
+					$div.empty();
+					$div.html("Nepodařilo se zjistit vaší polohu.")
+		        });
+		    } else { 
+				var $div = $("div.info")
+				$div.removeClass()
+				$div.addClass("info alert alert-danger")
+				$div.empty();
+				$div.html("Váš prohlížeč nepodporuje získání polohy.")
+		    }	
+		</script>
+	{/if}
+
+{/block}

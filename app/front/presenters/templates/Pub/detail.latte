@@ -1,0 +1,457 @@
+{block title}
+	{ifset $pub}
+	    | {$pub->wholeName} | Detail
+	{/ifset}
+{/block}
+
+
+{define beer}
+	{if $beer->link}
+		<a href="{!$beer->link}" title="{$beer->name} {if $beer->degree}{$beer->degree|degree}{/if}odkaz" target="_blank">
+	{/if}
+		{$beer->name}{if $beer->degree} {$beer->degree|degree}{/if}{if $beer->link}</a>{/if}{/define}
+
+
+{block content}
+	{ifset $pub}
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header name">
+	                {$pub->wholeName} {control rating ratio => $pub->mark}
+		            <a href="{link Pub:info, id => $pub->id}" class="btn btn-success">Ohodnotit</a>   
+	            </h1>
+	            <h3>
+	            	{$pub->location}
+	            <h3>
+            </div>
+        </div>
+        {*
+        <div class="row">
+            <div class="col-lg-12">
+	            <a href="{link Pub:info, id => $pub->id}" class="btn btn-success">Ohodnotit</a>   
+	            <a href="{link Pub:image, id => $pub->id}" class="btn btn-info">Přidat obrázky</a>
+            </div>
+        </div>
+        *}
+
+
+
+        <div class="row">
+            <div class="col-lg-12">
+            	<h2>Ceny</h2>
+                <ol class="list-group">
+					<li class="list-group-item">
+						{*Cena piva: {if $pub->beerPrice!==NULL}{$pub->beerPrice|number:2} kč{else}nehodnoceno{/if}*}
+						<h4>Cena piva:</h4>
+						<dl class="list-group" n:if="count($pub->beerPrice)">
+							<li n:foreach="$pub->beerPrice as $b => $p" n:class="list-group-item">
+								{if $p->price === NULL}
+									{include beer beer => $p->beer}: -
+								{else}
+									{include beer beer => $p->beer}: {$p->price|number:2} kč
+								{/if}
+							</li>
+						</dl>
+					</li>
+					<li class="list-group-item">
+						<h4>Cena vína:</h4> {if $pub->winePrice!==NULL}{$pub->winePrice|number:2} kč{else}nehodnoceno{/if}
+					</li>
+					<!--
+					<li class="list-group-item">
+						<h4>Cena jídla:</h4> {control rating ratio => $pub -> foodPrice}
+					</li>
+					-->
+                </ol>
+            </div>
+        </div>         
+
+        <div class="row">
+            <div class="col-lg-12" n:snippet="description">
+            	<h2>Popis <small n:if="$pub->lastDescription && $descriptionFormVisible">Verze {$pub->lastDescription->version}</small></h2>
+                <p n:if="$pub->lastDescription && ! $descriptionFormVisible && $pub->lastDescription->text !== ''">
+                	{$pub->lastDescription->text|noescape|trim|nl2br}
+                </p>
+                <p n:if="$pub->lastDescription && ! $descriptionFormVisible && $pub->lastDescription->text === ''">
+                	Není k dispozici žádný popis.
+                </p>
+                <div n:if="$descriptionFormVisible">
+					{include descriptionFormTemplate}
+                </div>
+                {if !$descriptionFormVisible}
+	                <a href="{link enableDescription!}" n:if="$user->loggedIn" class="label label-primary ajax">Upravit</a>
+                {/if}
+            </div>
+        </div>
+        
+        <div class="row" n:if="$pub->website">
+            <div class="col-lg-12">
+                <h4>
+                	Odkaz na <a href="{$pub->website|noescape}" title="Odkaz na {$pub->wholeName}">webové stránky</a>
+                </h4>
+            </div>
+        </div>
+
+		<hr>
+
+        <div class="row">
+			<div class="col-lg-12">
+				<h2>Mapa
+					<small>{$pub->address}</small>
+				</h2>
+			</div>        
+            <div class="col-lg-12">
+            	{control map}
+            	{if $isMobile}
+            		{if $isAndroid}
+	            		<a href="geo:{$lat},{$lng}" target="_blank">Podívat se na velké mapě</a>
+            		{elseif $isIOS}
+	            		<a href="http://maps.apple.com/?ll={$lat},{$lng}" target="_blank">Podívat se na velké mapě</a>
+            		{/if}
+            	{else}
+            		<a href="https://www.google.com/maps/place/{$lat},{$lng}/" target="_blank">Podívat se na velké mapě</a>
+            	{/if}
+            </div>
+        </div>        
+
+		<hr>
+
+		<div class="row">
+			<div class="col-lg-12">
+				<h2>Fotky</h2>
+			</div>
+		</div>
+		{snippet pics}
+			<div class="row">
+				{if}
+					{foreach $images as $key => $image}
+						{if ($iterator->counter-1) % 4 == 0 && ($iterator->counter-1) != 0}
+							</div><div class="row">
+						{/if}
+
+						<div class="col-lg-3">
+							<a href="{$basePath}/{$image->path}" class="thumbnail" target="_blank">
+								<img src="{$basePath}/{$image->thumbnail}" />
+						    </a>
+						</div>
+
+					{/foreach}
+
+				{else}
+					<div class="col-lg-12">
+						<h3>Žádné fotky</h3>
+						<a href="{link Pub:image, id => $pub->id}" class="btn btn-info">Přidat obrázky</a>
+					</div>
+				{/if count($images) > 0}
+				
+				{if count($images)}
+					<div class="col-lg-12">
+						<a href="{link Pub:image, id => $pub->id}" class="btn btn-info">Přidat obrázky</a>
+					</div>
+				{/if}
+			</div>
+		{/snippet}
+
+		<div class="row" n:if="count($images)>0">
+			{snippet paginator}
+			{control paginator2}
+			{/snippet}
+		</div>
+
+		<hr>
+
+        <div class="row">
+			<div class="col-lg-12">
+				<h2>Hodnocení</h2>
+			</div>
+            <div class="col-lg-12">
+            	{var $ratings = $pub->ratings->filter(function($o){ return $o->calculated;})}
+				{if}
+					{if \Tulinkry\Http\Browser::isMobile()}
+						<table class="table table-striped">
+							<thead>
+								<tr>
+									<th>#</th>
+									<th>Datum</th>
+									<th>Autor</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr n:foreach="$ratings as $rating" data-toggle="modal" data-target="#ratingModal-{$rating->id}">
+									<td>{$iterator->counter}</td>
+									<td title="{$rating->date}">{$rating->date}</td>
+									<td>{$rating->user->name}</td>
+								</tr>
+							</tbody>
+						</table>
+					
+						<div n:foreach="$ratings as $rating" class="modal fade" id="ratingModal-{$rating->id}" tabindex="-1" role="dialog" aria-labelledby="ratingModalLabel-{$rating->id}">
+							  <div class="modal-dialog" role="document">
+							    <div class="modal-content">
+							      <div class="modal-header">
+							        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+							        <h1 class="modal-title" id="ratingModalLabel-{$rating->id}">{$rating->user->name}</h1>
+							      </div>
+							      <div class="modal-body">
+							        <h3>{$rating->date}</h3>
+							        <table class="table table-condensed">
+										<tbody>
+											<tr>
+												<th>Pivo</th>
+												<td>
+													{if $rating->beerCriteria !== NULL}
+														{control rating:starNumber ratio => $rating->beerCriteria / \Model\PubModel::BEER_MAX}
+													{else}
+														-
+													{/if}
+												</td>
+											</tr>
+											<tr>
+												<th>Víno</th>
+												<td>
+													{if $rating->wineCriteria !== NULL}
+														{control rating:starNumber ratio => $rating->wineCriteria / \Model\PubModel::WINE_MAX}
+													{else}
+														-
+													{/if}
+												</td>
+											</tr>
+											<tr>
+												<th>Jídlo</th>
+												<td>
+													{if $rating->foodCriteria !== NULL}
+														{control rating:starNumber ratio => $rating->foodCriteria / \Model\PubModel::FOOD_MAX}
+													{else}
+														-
+													{/if}
+												</td>
+											</tr>
+											<tr>
+												<th>Toalety</th>
+												<td>
+													{if $rating->toaletsCriteria !== NULL}
+														{control rating:starNumber ratio => $rating->toaletsCriteria / \Model\PubModel::TOALETS_MAX}
+													{else}
+														-
+													{/if}
+												</td>
+											</tr>
+											<tr>
+												<th>Interiér</th>
+												<td>
+													{if $rating->interierCriteria !== NULL}
+														{control rating:starNumber ratio => $rating->interierCriteria / \Model\PubModel::INTERIER_MAX}
+													{else}
+														-
+													{/if}
+												</td>
+											</tr>
+											<tr>
+												<th>Exteriér</th>
+												<td>
+													{if $rating->exterierCriteria !== NULL}
+														{control rating:starNumber ratio => $rating->exterierCriteria / \Model\PubModel::EXTERIER_MAX}
+													{else}
+														-
+													{/if}
+												</td>
+											</tr>
+											<tr>
+												<th>Obsluha</th>
+												<td>
+													{if $rating->serviceCriteria !== NULL}
+														{control rating:starNumber ratio => $rating->serviceCriteria / \Model\PubModel::SERVICE_MAX}
+													{else}
+														-
+													{/if}
+												</td>
+											</tr>
+											{*
+											<tr>
+												<th>Cena piva</th>
+												<td>
+													{if $rating->beerPrice !== NULL}
+														{dump $rating->beerPrice} kč
+													{else}
+														-
+													{/if}
+												</td>
+											</tr>
+											*}
+											<tr>
+												<th>Cena vína</th>
+												<td>
+													{if $rating->winePrice !== NULL}
+														{$rating->winePrice} kč
+													{else}
+														-
+													{/if}
+												</td>
+											</tr>
+											<tr>
+												<th>Celková spokojenost s cenou</th>
+												<td>
+													{if $rating->foodPriceCriteria !== NULL}
+														{control rating:starNumber ratio => $rating->foodPriceCriteria / \Model\PubModel::FOOD_PRICE_MAX}
+													{else}
+														-
+													{/if}
+												</td>
+											</tr>
+											<tr>
+												<th>Celkový dojem</th>
+												<td>
+													{if $rating->overallCriteria !== NULL}
+														{control rating:starNumber ratio => $rating->overallCriteria / \Model\PubModel::OVERALL_MAX}
+													{else}
+														-
+													{/if}
+												</td>
+											</tr>
+											<tr>
+												<th>Známka</th>
+												<td>{control rating:number ratio => \Model\PubModel::singleRating($rating)}</td>
+											</tr>
+										</tbody>
+									</table>
+							      </div>
+							      <div class="modal-footer">
+							        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+							      </div>
+							    </div>
+							</div>
+						</div>
+					{else}
+						<table class="table table-striped">
+							<thead>
+								<tr>
+									<th>#</th>
+									<th>Autor</th>
+									<th>Pivo</th>
+									<th>Víno</th>
+									<th>Jídlo</th>
+									<th>Toalety</th>
+									<th>Interiér</th>
+									<th>Exteriér</th>
+									<th>Obsluha</th>
+									{*<th>Cena P.</th>*}
+									<th>Cena V.</th>
+									<th>Cena celk.</th>
+									<th>Celkový dojem</th>
+									<th>Známka</th>
+								</tr>
+							</thead>
+							<tbody>
+
+								<tr n:foreach="$ratings as $rating">
+
+									<td>{$iterator->counter}</td>
+									<td title="{$rating->date}">{$rating->user->name}</td>
+									<td>
+										{if $rating->beerCriteria !== NULL}
+											{control rating:starNumber ratio => $rating->beerCriteria / \Model\PubModel::BEER_MAX}
+										{else}
+											-
+										{/if}
+									</td>
+									<td>
+										{if $rating->wineCriteria !== NULL}
+											{control rating:starNumber ratio => $rating->wineCriteria / \Model\PubModel::WINE_MAX}
+										{else}
+											-
+										{/if}
+									</td>
+									<td>
+										{if $rating->foodCriteria !== NULL}
+											{control rating:starNumber ratio => $rating->foodCriteria / \Model\PubModel::FOOD_MAX}
+										{else}
+											-
+										{/if}
+									</td>
+									<td>
+										{if $rating->toaletsCriteria !== NULL}
+											{control rating:starNumber ratio => $rating->toaletsCriteria / \Model\PubModel::TOALETS_MAX}
+										{else}
+											-
+										{/if}
+									</td>
+									<td>
+										{if $rating->interierCriteria !== NULL}
+											{control rating:starNumber ratio => $rating->interierCriteria / \Model\PubModel::INTERIER_MAX}
+										{else}
+											-
+										{/if}
+									</td>
+									<td>
+										{if $rating->exterierCriteria !== NULL}
+											{control rating:starNumber ratio => $rating->exterierCriteria / \Model\PubModel::EXTERIER_MAX}
+										{else}
+											-
+										{/if}
+									</td>
+									<td>
+										{if $rating->serviceCriteria !== NULL}
+											{control rating:starNumber ratio => $rating->serviceCriteria / \Model\PubModel::SERVICE_MAX}
+										{else}
+											-
+										{/if}
+									</td>
+									{*
+									<td>
+										{if $rating->beerPrice !== NULL}
+											{dump $rating->beerPrice} kč
+										{else}
+											-
+										{/if}
+									</td>
+									*}
+									<td>
+										{if $rating->winePrice !== NULL}
+											{$rating->winePrice} kč
+										{else}
+											-
+										{/if}
+									</td>
+									<td>
+										{if $rating->foodPriceCriteria !== NULL}
+											{control rating:starNumber ratio => $rating->foodPriceCriteria / \Model\PubModel::FOOD_PRICE_MAX}
+										{else}
+											-
+										{/if}
+									</td>
+									<td>
+										{if $rating->overallCriteria !== NULL}
+											{control rating:starNumber ratio => $rating->overallCriteria / \Model\PubModel::OVERALL_MAX}
+										{else}
+											-
+										{/if}
+									</td>
+									<td>
+										{control rating:number ratio => \Model\PubModel::singleRating($rating)}
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					{/if}
+				{else}
+					<h3>Žádné záznamy</h3>
+				{/if count($pub->ratings) > 0}
+            </div>
+        </div>	     
+
+        <div class="row">
+            <div class="col-lg-12">
+	            <a href="{link Pub:info, id => $pub->id}" class="btn btn-success">Ohodnotit</a>   
+	            {*<a href="{link Pub:image, id => $pub->id}" class="btn btn-info">Přidat obrázky</a>*}
+            </div>
+        </div>	  
+	{else}
+		<div class="row">
+			<div class="col-lg-12">
+				<p class="alert alert-danger">Nebyla nalezena požadovaná restaurace</p>
+				<a href="{link Pub:default}" title="Seznam restaurací" class="btn btn-info">Zpět</a>
+			</div>
+		</div>
+	{/ifset}
+{/block}
+
+

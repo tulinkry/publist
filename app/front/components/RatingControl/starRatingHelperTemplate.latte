@@ -1,0 +1,8 @@
+<div title="{$percent}" style="display: inline">
+	{for $i = 0; $i < $count; $i ++ }
+		<img src="{$basePath}/{$image_normal}" class="star">
+	{/for}
+	{for $i = $count; $i < $max; $i ++ }
+		<img src="{$basePath}/{$image_grey}" class="star">
+	{/for}
+</div>

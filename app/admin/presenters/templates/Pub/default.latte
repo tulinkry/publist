@@ -1,0 +1,49 @@
+{block content}
+    <div class="row">
+        <div class="col-lg-12">
+			<h1>Publist</h1>
+        </div>
+    </div>
+
+    <div class="row">
+		<div class="col-lg-12">
+			{if}
+				{snippet pubs}
+					<table class="table table-striped">
+						<thead>
+							<tr>
+								<th>#</th>
+								<th>Jméno</th>
+								<th>Místo</th>
+								<th>Viditelná</th>
+								<th>Odkaz</th>
+								<th>Smazat</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr n:foreach="$pubs as $pub">
+								<td>{$pub->id}</td>
+								<td>{$pub->wholeName}</td>
+								<td>{$pub->location}</td>
+								<td>
+									<a n:if="$pub->hidden" href="{link unhide! pub_id => $pub->id}" title="Unhide" class="label label-danger ajax">Unhide</a>
+									<a n:if="!$pub->hidden" href="{link hide! pub_id => $pub->id}" title="Hide" class="label label-success ajax">Hide</a>
+								</td>
+								<td><a href="{link detail, id => $pub->id, paginator-page => $paginator->page}" title="{$pub->wholeName} delete" class="btn btn-warning">Upravit</a></td>
+								<td><a href="{link delete!, pub_id => $pub->id}" title="{$pub->wholeName} delete" class="btn btn-danger delete ajax" data-confirm="Opravdu?">Smazat</a></td>
+							</tr>
+						</tbody>
+					</table>
+				{/snippet}
+				
+				{snippet paginator}
+				{control paginator}
+				{/snippet}
+			{else}
+				<h3>Žádné záznamy</h3>
+			{/if count($pubs) > 0}
+		</div>
+	</div>
+{/block}
+
+

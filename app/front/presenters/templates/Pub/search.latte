@@ -1,0 +1,66 @@
+{block title}
+    | Hledání
+{/block}
+
+
+
+{block content}
+        <div class="row">
+            <div class="col-lg-12">
+			    <h1 class="page-header">
+			    Publist - výsledky hledání <small>({$count} záznamů)</small>
+			    </h1>
+            </div>
+		</div>
+
+ 
+        <div class="row">
+            <div class="col-lg-12">
+				{if}
+					<table class="table table-striped" n:snippet="pubs">
+						<thead>
+							<tr>
+								<th>#</th>
+								<th>Jméno</th>
+								<th>Místo</th>
+								<th>Hodnocení</th>
+								<th></th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr n:foreach="$pubs as $pub" data-href="{link detail, id => $pub->id}">
+								<td>
+									{( $presenter["paginator"]->getPaginator()->page - 1 ) * $presenter["paginator"]->getPaginator()->itemsPerPage + $iterator->counter}
+								</td>
+								<td>
+									{if $user->loggedIn && 
+									    isset($userClass) && 
+										$userClass &&
+									    $userClass->hasRated($pub)}
+										<img src="{$basePath}/images/tick/tick.png" class="star" />
+									{/if}
+									<a class="detail" href="{link detail, id => $pub->id}" title="{$pub->wholeName} detaily">{$pub->wholeName}</a>
+									
+								</td>
+								<td>{$pub->location}</td>
+								<td>{control rating ratio => $pub->mark} {control rating:number ratio => $pub->mark} 
+									<span class="badge badge-rating">{count($pub->ratings)}</span>
+								</td>
+								<td>
+								
+								</td>
+							</tr>
+						</tbody>
+					</table>
+
+					{snippet paginator}
+					{control paginator}
+					{/snippet}
+
+				{else}
+					<h3>Žádné záznamy</h3>
+				{/if count($pubs) > 0}
+			</div>
+		</div>
+
+{/block}

@@ -1,0 +1,26 @@
+{snippet}
+
+{if isset($_form) && !isset($close)}
+  <div class="modal fade in" id="dialogControl-modal" style="display: block" aria-hidden="false">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <a href="{plink CloseDialog!}" class="ajax dialog-clean"><button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button></a>
+          <h4 class="modal-title">{isset($title)&&!empty($title)?$title}Ahoj</h4>
+        </div>
+        <div class="modal-body">
+          {control $_form}
+        </div>
+        <div class="modal-footer">
+          <a href="{plink CloseDialog!}" class="ajax dialog-clean"><button type="button" class="btn btn-default ajax">Close</button></a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="modal-backdrop fade in"></div>
+
+{/if}
+
+{/snippet}

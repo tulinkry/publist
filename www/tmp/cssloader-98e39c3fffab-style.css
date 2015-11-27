@@ -1,0 +1,205 @@
+
+body {
+	font-size: 15px;
+	line-height: 1.6;
+	color: #333;
+	background: white;
+}
+
+h1 {
+	color: #3484D2;
+}
+
+#ajax-spinner {
+	margin: 15px 0 0 15px;
+	padding: 13px;
+	background: white url('../images/spinner.gif') no-repeat 50% 50%;
+	font-size: 0;
+	z-index: 123456;
+	display: none;
+}
+
+div.flash {
+	color: black;
+	background: #FFF9D7;
+	border: 1px solid #E2C822;
+	padding: 1em;
+	margin: 1em 0;
+}
+
+a[href^="#error:"] {
+	background: red;
+	color: white;
+}
+
+form th, form td {
+	vertical-align: top;
+	font-weight: normal;
+}
+
+form th {
+	text-align: right;
+}
+
+form .required label {
+	font-weight: bold;
+}
+
+form .error {
+	color: #D00;
+	font-weight: bold;
+}
+
+
+.star {
+	max-width: 10px;
+	max-height: 10px;
+}
+
+.star_10 {
+	max-width: 10px;
+	max-height: 10px;
+}
+
+.star_25 {
+	max-width: 25px;
+	max-height: 25px;
+}
+
+.star_30 {
+	max-width: 30px;
+	max-height: 30px;
+}
+
+/** boostrap add */
+.alert-error {
+    color: #A94442;
+    background-color: #F2DEDE;
+    border-color: #EBCCD1;
+}
+
+.overflow-x {
+	overflow-x: auto;
+}
+
+
+.side-panel {
+	padding-top: 40px;
+}
+
+.panel-image .panel-body {
+	padding: 0;
+}
+
+.panel-image .panel-body .thumbnail {
+	margin-bottom: 0;
+}
+
+.panel-image img {
+	width: 100%;
+	height: 100%;
+}
+
+.badge-rating {
+	min-width: 8px;
+	padding: 3px 5px;
+	font-size: 8px;
+}
+
+.nowrap {
+	white-space: nowrap;
+}
+
+
+*[data-toggle] {
+	cursor: pointer;
+}
+
+
+.btn-star {
+	background-image: url(../images/stars/star_grey.png);
+	background-size: 25px 25px;
+	background-repeat: no-repeat;
+
+	/** bootstrap btn */
+	display: inline-block;
+	padding: 6px 12px;
+	margin-bottom: 0px;
+	font-size: 14px;
+	font-weight: 400;
+	line-height: 1.42857;
+	text-align: center;
+	white-space: nowrap;
+	vertical-align: middle;
+	cursor: pointer;
+	-moz-user-select: none;
+	border: 1px solid transparent;
+	border-radius: 4px;
+}
+.btn-star:before, .btn-rating:before {
+	content:"\00a0";
+}
+
+.btn-star.active {
+	background-image: url(../images/stars/star.png);
+  
+	/*box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.125) inset;*/
+}
+
+/*
+ * bootstrap form rendering
+ */
+
+.checkbox label, .radio label {
+	padding-left: 0;
+}
+
+
+.beer {
+	box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.125) inset;
+    /* Fallback for web browsers that doesn't support RGBa */
+    background: rgb(0, 0, 0) transparent;
+    /* RGBa with 0.6 opacity */
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 7px;
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+    margin-bottom: 19px;
+}
+
+.linebreak {
+	display: block;
+}
+
+
+
+.xtra small {
+	display: none;
+}
+
+@media(max-width:422px) {
+    .xtra { 
+    	margin-left: 8.33333%;
+
+    }
+    .xtra:before {
+	    content: "";
+	    display: block;
+	    height: 1px;
+	    width: 100%;
+	    background: #333;
+	    margin-top: 5px;
+	    margin-bottom: 5px;
+
+
+    }
+
+    .panel-info .panel-heading .xtra:before {
+	    background: #31708F;
+    }
+
+    .xtra small {
+    	display: inline;
+    }
+
+}

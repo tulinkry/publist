@@ -1,0 +1,74 @@
+{block content}
+
+	{if $pub}
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header">
+                    {$pub->wholeName}
+                </h1>
+                <h3>
+                	{$pub->location}
+                </h3>
+            </div>
+        </div>	
+
+		
+		{snippet pics}
+		<div class="row">
+			{foreach $images as $key => $image}
+				{if ($iterator->counter-1) % 4 == 0 && ($iterator->counter-1) != 0}
+					</div><div class="row">
+				{/if}
+
+				<div class="col-lg-3">
+					<div class="panel panel-info panel-image">
+						<div class="panel-heading">
+							<a n:href="rotate! file_name => $key" class="label label-warning ajax">Rotovat</a>
+							<a n:href="delete! file_name => $key" class="label label-danger delete ajax">Smazat</a>
+						</div>
+						<div class="panel-body">
+							<a href="{$basePath}/{$image->path}" class="thumbnail" target="_blank" {*data-toggle="modal" data-target="#imageModal-{$iterator->counter}"*}>
+								<img src="{$basePath}/{$image->thumbnail}?{$image->lastUpdated}" />
+						    </a>
+					    </div>
+				    </div>
+
+					<!--<div class="modal fade" id="imageModal-{$iterator->counter}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+					    <div class="modal-dialog">
+					        <div class="modal-content">
+					            <div class="modal-header">
+					                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					                 <h4 class="modal-title">Modal title</h4>
+
+					            </div>
+					            <div class="modal-body"></div>
+					            <div class="modal-footer">
+					                <button type="button" class="btn btn-default" data-dismiss="modal">Zavřít</button>
+					            </div>
+					        </div>
+					    </div>
+					</div>-->
+				</div>
+
+			{/foreach}
+
+
+
+
+
+		</div>
+		{/snippet}
+
+		<a href="{link Image:insert, id => $pub->id, paginator-page => $paginator->page}" class="btn btn-primary">Přidat obrázky</a>
+
+	{else}
+		<div class="row">
+			<div class="col-lg-12">
+				<p class="alert alert-danger">Nebyla nalezena požadovaná restaurace</p>
+				<a href="{link Image:default}" title="Seznam restaurací" class="btn btn-info">Zpět</a>
+			</div>
+		</div>
+	{/if}
+
+
+{/block}

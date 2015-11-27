@@ -1,0 +1,101 @@
+{block title}
+    | Nová restaurace
+{/block}
+
+{block main-content-row}
+    {block content-column}
+        <div class="col-lg-12">
+    		{include content}
+        </div>
+    {/block}
+{/block}
+
+
+{block content}
+        
+    <div class="row">
+        <div class="col-lg-12">
+		    <h1 class="page-header">
+		    	Vložení nové restaurace
+		    </h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12">
+        	<div class="list-group">
+        		<a class="list-group-item">Možnosti vkládání</a>
+        		{include curlink type => $presenter::SELECT_CLOSEST, link => "Vyberu z nejbližších restaurací"}
+        		{include curlink type => $presenter::SELECT_MAP, link => "Vyhledám restauraci na mapě"}
+        		{include curlink type => $presenter::SELECT_COORDS, link => "Znám přesné souřadnice"}
+        	</div>
+		</div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12">
+			{if $type === $presenter::SELECT_CLOSEST}
+				{if !isset($step) || $step === 1}
+					<h2>Nejbližší restaurace</h2>
+					<a href={link location!} class="btn btn-info" data-toggle="location" {if !$coordsExist}data-trigger="auto"{/if}>Získat aktuální polohu</a>
+					<hr />
+					<div n:snippet="pubs">
+						<div class="panel-group" id="accordion">
+					        <div class="panel panel-default">
+					            <div class="panel-heading">
+				                    <h4 class="panel-title">
+										Kliknutím na vybranou restauraci přejdete na stránku pro její vložení
+				                    </h4>
+					            </div>
+					        </div>
+					        <div n:foreach="$pubs as $pub" class="panel panel-default">
+					            <div class="panel-heading accordion-toggle" data-toggle="collapse" data-parent="#accordion" data-target="#collapse-{$pub->id}">
+					            	<a href="{link this type => $presenter::SELECT_CLOSEST, step => 2, placeid => $pub -> id}">
+					                    <h4 class="panel-title">
+											{$iterator->counter}.
+					                        {$pub->name} <small>{$pub->location}</small>
+				                            <span class="linebreak">
+				                            	<small>Vzdálenost:</small> {$pub->distance|metres}
+				                           	</span>
+					                    </h4>
+					                </a>
+					            </div>
+					        </div>
+					        <div class="panel panel-default">
+					            <div class="panel-heading">
+				                    {include google-logo}
+					            </div>
+					        </div>
+					        
+						</div>
+					</div>
+				{elseif $step === 2}
+					{include pubFormTemplate}
+				{/if}
+			{elseif $type === $presenter::SELECT_MAP}
+				{include pubFormTemplate}
+			{elseif $type === $presenter::SELECT_COORDS}
+				{include alternatePubFormTemplate}
+			{/if}
+
+        </div>
+    </div>	     
+		
+    <div class="row">
+        <div class="col-lg-12">
+			<a href="{link Pub:default}" title="Seznam restaurací" class="btn btn-info">Zpět</a>
+        </div>
+    </div>	    
+
+	{control js "http://maps.googleapis.com/maps/api/js?libraries=places&sensor=false&language=cs"}
+	{control js "gps.js"}
+
+{/block}
+
+{define curlink}
+    <a class="list-group-item{ifCurrent this type => $type} active{/ifCurrent}" href="{link this type => $type, step => 1}" title="{isset($title)?$title}">
+    	{$link}
+    </a>
+{/define}
+
+

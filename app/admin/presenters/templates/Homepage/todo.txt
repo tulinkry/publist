@@ -1,0 +1,20 @@
+- přidávání restaurace v administraci
+
+- dodělat pořádně odkazy
+    - nová restaurace
+    - hodnocení
+    - přidat obrázky
+
+- žebříčky
+    - výběr řazení v roletce
+    - sloupec s hvězdičkami podle výběru v roletce
+
+
+- vymyslet systém s vkládáním nových restaurací
+    - potvrzení emailem?
+
+- !!!
+- věnovat své lásce veškerý svůj čas
+    - milovat ji do konce všech světů
+    - potvrzení emailem?
+

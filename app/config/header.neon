@@ -1,0 +1,90 @@
+parameters:
+	libsDir: %appDir%/../vendor
+	#assetsDir: %libsDir%/tulinkry/assets
+	assets: %libsDir%/tulinkry/assets
+	#assets: %appDir%/tulinkry/assets
+	addons: %assets%/js/addons
+
+	js-extensions: 
+		ajax-progress-bar:
+			# path: %addons%/ajax-progress-bar.js
+			path: %addons%/ajax-progress-bar-v2.js
+
+
+	header:
+		css: [
+			assets: [
+				#bootstrap
+				bootstrap/bootstrap3.3.4.min.css,
+				bootstrap/bootstrap-switch.min.css,
+				bootstrap/bootstrap.select.min.css,
+
+				# grid component
+				# grid/nextras.datagrid.css,
+
+				# paginator component
+				paginator/paginator.css,
+
+				# gallery component
+				# gallery/blueimp-gallery.min.css,
+				# gallery/blueimp-gallery-video.css,
+
+				# upload component
+				# upload/jquery.fileupload.css,
+				# upload/jquery.fileupload-ui.css,
+
+				# timepicker
+				timepicker/datetimepicker.min.css
+			],
+			style.css,
+		]
+		js: [
+
+			assets: [
+				# jquery 1.11.3
+				jquery/jquery.min.js,
+				# ui 1.11.4
+				jquery/jquery-ui.min.js,
+				# jquery mobile // swipe function
+				# custom/jquery.mobile.defaults.js,
+				# jquery/jquery.mobile.min.js,
+
+				#bootstrap
+				bootstrap/bootstrap3.3.4.min.js,
+				bootstrap/bootstrap-switch.min.js,
+				bootstrap/bootstrap.select.min.js,
+
+
+				# grid component
+				#grid/nextras.datagrid.js,
+
+				# gallery component
+				#gallery/blueimp-gallery.min.js,
+				#gallery/jquery.blueimp-gallery.min.js,
+
+
+				# upload component, strict order
+				#upload/template.min.js,
+				#upload/load-image.all.min.js,
+				#upload/canvas-to-blob.min.js,
+				#upload/jquery.iframe-transport.js,
+				#upload/jquery.fileupload.js,
+				#upload/jquery.fileupload-process.js
+				#upload/jquery.fileupload-image.js
+				#upload/jquery.fileupload-audio.js
+				#upload/jquery.fileupload-video.js
+				#upload/jquery.fileupload-validate.js
+				#upload/jquery.fileupload-ui.js,
+
+				# timepicker
+				timepicker/moment.js
+				timepicker/datetimepicker.js,
+
+				# map
+				# map/markerclusterer.js
+			]
+			netteAjax.js,
+			#bootbox.js,
+			main.js,
+			netteForms.js
+		]

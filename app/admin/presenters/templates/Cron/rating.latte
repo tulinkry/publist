@@ -1,0 +1,37 @@
+{block content}
+    <div class="row">
+        <div class="col-lg-12">
+			<h1>Cron</h1>
+        </div>
+    </div>
+
+
+    <div class="row">
+		<div class="col-lg-12">
+			{if}
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th>Datum</th>
+							<th>Jméno</th>
+							<th>Restaurace</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr n:foreach="$ratings as $rating">
+							<td>{$rating->date|date:'j. n. Y H:i'}</td>
+							<td>{$rating->user->username}</td>
+							<td>{$rating->pub->whole_name}</td>
+						</tr>
+					</tbody>
+				</table>
+				
+			{else}
+				<h3>Žádné záznamy</h3>
+			{/if count($ratings) > 0}
+		</div>
+	</div>
+
+{/block}
+
+

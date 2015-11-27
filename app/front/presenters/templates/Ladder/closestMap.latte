@@ -1,0 +1,79 @@
+{layout 'default.latte'}
+
+{block title}
+    | Žebříček | Nejbližší | Mapa
+{/block}
+
+{block container_class}
+container-fluid
+{/block}
+
+{block main-content-row}
+    {block content-column}
+        <div class="col-lg-12">
+    		{include content}
+        </div>
+    {/block}
+{/block}
+
+{block ladderTable}
+	
+		<div class="info">
+		</div>
+
+		<h2>Nejbližší - mapa</h2>
+
+		{control closestMap}
+
+
+		{if isset($pubs) && count($pubs) > 0}
+		<hr />
+			<table class="table table-striped" n:snippet="pubs">
+
+				<thead>
+					<tr>
+						<th>#</th>
+						<th>{include orderLink name => "Známka",		title => "Seřadit podle celkového hodnocení", 				sort => 1}</th>
+						<th>{include orderLink name => "Jméno",			title => "Seřadit podle jména", 							sort => 2}</th>
+						<th>{include orderLink name => "Místo",			title => "Seřadit podle místa", 							sort => 3}</th>
+						<th>{include orderLink name => "Cena",			title => "Seřadit podle spokojenost s cenou", 				sort => 8}</th>
+						<th>{include orderLink name => "Vzdálenost",	title => "Seřadit podle vzdálenosti k aktuální poloze",		sort => 15}</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr n:foreach="$pubs as $pub">
+						<td>{( $presenter["paginator"]->getPaginator()->page - 1 ) * $presenter["paginator"]->getPaginator()->itemsPerPage + $iterator->counter}</td>
+
+						<td>{control rating ratio => $pub->mark}</td>
+
+
+						<td><a href="{link Pub:detail, id => $pub->id}" title="{$pub->wholeName} detaily">{$pub->wholeName}</a></td>
+						<td>{$pub->location}</td>
+						
+						<td>
+							{control rating ratio => $pub->foodPrice}
+							<span class="badge badge-rating" title="Hodnoceno {$pub->markVoted}x" n:if="$pub->markVoted">{$pub->markVoted}</span>
+						</td>
+						<td>
+			            	{if $isMobile}
+			            		{if $isAndroid}
+				            		<a href="https://maps.google.com?saddr={$lat},{$lng}&daddr={$pub->latitude},{$pub->longitude}">{$distances[$pub->id]|metres}</a>
+			            		{elseif $isIOS}
+				            		<a href="maps://maps.google.com?saddr={$lat},{$lng}&daddr={$pub->latitude},{$pub->longitude}">{$distances[$pub->id]|metres}</a>
+			            		{/if}
+			            	{else}
+			            		<a href="https://maps.google.com?saddr={$lat},{$lng}&daddr={$pub->latitude},{$pub->longitude}" target="_blank">{$distances[$pub->id]|metres}</a>
+			            	{/if}
+						</td>
+
+
+					</tr>
+				</tbody>
+			</table>
+
+		{else}
+			<h3>Žádné záznamy</h3>
+		{/if}
+
+		<a href="{link Ladder:closest lat => $lat, lng => $lng}" class="btn btn-info">Zpět</a>
+{/block}

@@ -1,0 +1,19 @@
+parameters:
+	sliderSrc: images/slider
+	slider:
+		lg: "lg"
+		sm: "sm"
+		md: "md"
+		xs: "xs"
+	contactEmails: 
+		- "k.tulinger@gmail.com"
+	approvePub:
+		to:
+			- "k.tulinger@gmail.com"
+		from: "admin@concreteostrich.cz"
+		subject: "Publist - %s"
+	pub:
+		typeFile: %appDir%/config/types.neon
+	beer:
+		plugins: 
+			- Model\PivniciPlugin

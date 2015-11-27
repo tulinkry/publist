@@ -1,0 +1,46 @@
+parameters:
+	menu:
+		links: 
+			"Index:default":
+				wrapper: 
+					element: li
+					attr: [ class: "col-md-3 col-sm-3 col-lg-3" ]
+				html: Home
+				attr: [
+					class: "btn btn-lg btn-blue text-center"
+				]
+			"Band:default": 
+				wrapper: 
+					element: li
+					attr: [ class: "col-md-3 col-sm-3 col-lg-3" ]
+				html: Kapela
+				attr: [
+					class: "btn btn-lg btn-warning text-center"
+				]
+			"Concert:default": 
+				wrapper: 
+					element: li
+					attr: [ class: "col-md-2 col-sm-2 col-lg-2" ]
+				html: Koncerty
+				attr: [
+					class: "btn btn-lg btn-danger text-center"
+				]
+			"Photo:default": 
+				wrapper: 
+					element: li
+					attr: [ class: "col-md-2 col-sm-2 col-lg-2" ]
+				html: Foto
+				attr: [
+					class: "btn btn-lg btn-purple text-center"
+				]
+			"Contact:default": 
+				wrapper: 
+					element: li
+					attr: [ class: "col-md-2 col-sm-2 col-lg-2" ]
+				html: Kontakty
+				attr: [
+					class: "btn btn-lg btn-success text-center"
+				]
+		outer:
+			element: ul
+			attr: [ class: "row list-unstyled menu" ]

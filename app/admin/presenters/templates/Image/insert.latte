@@ -1,0 +1,19 @@
+{block content}
+
+	{if $pub}
+        <div class="row">
+            <div class="col-lg-12">
+				{control imageForm}
+            </div>
+        </div>	     
+
+		<a href="{link Image:detail, id => $pub->id, paginator-page => $paginator->page}" class="btn btn-info">Zpět</a>
+	{else}
+		<div class="row">
+			<div class="col-lg-12">
+				<p class="alert alert-danger">Nebyla nalezena požadovaná restaurace</p>
+				<a href="{link Image:default}" title="Seznam restaurací" class="btn btn-info">Zpět</a>
+			</div>
+		</div>
+	{/if}
+{/block}

@@ -1,0 +1,123 @@
+{layout 'default.latte'}
+
+
+{block title}
+    | Žebříček | Modal windows
+{/block}
+
+{block container_class}
+container
+{/block}
+
+{block ladderTable}
+
+	<h2>Seřadit dle kritéria</h2>
+	<div class="dropdown">
+	  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+	    Seřadit
+	    {ifCurrent this sort => 16}
+	    	podle data vložení
+	    {/ifCurrent}
+	    {ifCurrent this sort => 17}
+	    	podle poslední úpravy
+	    {/ifCurrent}
+	    <span class="caret"></span>
+	  </button>
+	  <ul class="dropdown-menu" aria-labelledby="dropdownMenu">
+		<li>{include orderLink name => "Nejnovější",					title => "Seřadit podle data vložení", 		sort => 16}</li>
+		<li>{include orderLink name => "Naposledy upraveno",			title => "Seřadit podle poslední úpravy", 	sort => 17}</li>
+	  </ul>
+	</div>
+
+	<hr />
+
+	<div n:snippet="pubs">
+		<div class="panel-group" id="accordion">
+	        <div n:foreach="$pubs as $pub" class="panel panel-default">
+	            <div class="panel-heading accordion-toggle" data-toggle="collapse" data-parent="#accordion" data-target="#collapse-{$pub->id}">
+	                    <h4 class="panel-title">
+							{$iterator->counter}.
+	                        {$pub->wholeName} <small>{$pub->location}</small>
+	                        <div>
+	                            <small>Známka:</small> {control rating ratio => $pub->mark} 
+	                            	<span class="badge badge-rating">{count($pub->ratings)}</span>
+	                        </div>
+	                    </h4>
+	            </div>
+	            <div id="collapse-{$pub->id}" class="panel-collapse collapse">
+	                <div class="panel-body">
+	                    {$pub->long_name}
+	                </div>
+			        <table class="table table-condensed">
+			        	<tr>
+				        	<th>Interiér</th>
+				        	<td>
+				        		{control rating ratio => $pub->interierMark}
+							</td>
+							<td>
+								<span n:if="$pub->markVoted" class="label label-success">{$pub->markVoted}x hodnoceno</span>
+							</td>
+			        	</tr>
+			        	<tr>
+				        	<th>Exteriér</th>
+				        	<td>
+				        		{control rating ratio => $pub->exterierMark}
+							</td>
+							<td>
+								<span n:if="$pub->markVoted" class="label label-success">{$pub->markVoted}x hodnoceno</span>
+							</td>
+						</tr>
+						<tr>
+				        	<th>Toalety</th>
+							<td>
+								{control rating ratio => $pub->toaletsMark}
+							</td>
+							<td>
+								<span n:if="$pub->markVoted" class="label label-success">{$pub->markVoted}x hodnoceno</span>
+							</td>
+						</tr>
+						<tr>
+				        	<th>Personál</th>
+							<td>
+								{control rating ratio => $pub->serviceMark}
+							</td>
+							<td>
+								<span n:if="$pub->markVoted" class="label label-success">{$pub->markVoted}x hodnoceno</span>
+							</td>
+						</tr>
+						<tr>
+				        	<th>Spokojenost s cenou</th>
+							<td>
+								{control rating ratio => $pub->foodPrice}
+							</td>
+							<td>
+								<span n:if="$pub->markVoted" class="label label-success">{$pub->markVoted}x hodnoceno</span>
+							</td>
+						</tr>
+						<tr>
+				        	<th>Celkový dojem</th>
+							<td>
+								{control rating ratio => $pub->overallMark}
+							</td>
+							<td>
+								<span n:if="$pub->markVoted" class="label label-success">{$pub->markVoted}x hodnoceno</span>
+							</td>
+						</tr>
+						<tr>
+				        	<th>Odkaz</th>
+							<td colspan="2">
+								<a href="{link Pub:detail id => $pub -> id}" title="{$pub->wholeName} detaily">{$pub->wholeName}</a>
+							</td>
+						</tr>
+			        </table>
+	            </div>
+	        </div>
+	    </div>
+      
+    </div>
+
+
+{/block}
+
+
+

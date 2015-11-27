@@ -1,0 +1,68 @@
+#
+# SECURITY WARNING: it is CRITICAL that this file & directory are NOT accessible directly via a web browser!
+#
+# If you don't protect this directory from direct web access, anybody will be able to see your passwords.
+# http://nette.org/security-warning
+#
+parameters:
+
+	gallery:
+		# path relative to %wwwDir%
+		path: images
+		thumbnail_path: images/thumbnails
+	paginator:
+		itemsPerPage: 15
+
+php:
+	date.timezone: Europe/Prague
+	session.save_path: "%tempDir%/sessions"
+
+
+nette:
+	application:
+	#	errorPresenter: Front:Error
+		mapping:
+			*: *Module\Presenters\*Presenter
+	session:
+		autoStart: smart
+		expiration: 14 days
+	debugger:
+		email: k.tulinger@seznam.cz
+
+services:
+	- Router\RouterFactory
+	router: @Router\RouterFactory::createRouter
+	parameterService: Tulinkry\Services\ParameterService
+
+	authenticator: Authenticator\Authenticator()
+
+	authorizatorFactory: Authorizator\authorizatorFactory()
+	authorizator: @authorizatorFactory::createAuthorizator
+
+	cssControl: Tulinkry\Components\ICssLoader
+	jsControl: Tulinkry\Components\IJsLoader
+	#menuControl: 
+	#	implement: Tulinkry\Components\IMenuControl
+	#	class: Tulinkry\Components\MenuControl(%array%,...)
+	#	parameters: [array]
+
+	emails: Model\EmailModel( %email_server%, %email_port%, %email_arguments%, %email_user%, %email_password% )
+
+	pubs: Model\PubModel()
+	ratings: Model\RatingModel()
+	users: Model\UserModel()
+	beers: Model\BeerModel()
+	descriptions: Model\DescriptionModel()
+	beerlinks: Model\BeerLinksModel()
+
+
+extensions:
+	console: Kdyby\Console\DI\ConsoleExtension
+	events: Kdyby\Events\DI\EventsExtension
+	annotations: Kdyby\Annotations\DI\AnnotationsExtension
+	doctrine: Kdyby\Doctrine\DI\OrmExtension
+	gpspicker: VojtechDobes\NetteForms\GpsPickerExtension
+	map: Oli\GoogleAPI\MapApiExtension
+	
+map:
+    key: "AIzaSyCBNGn9ADxqF-jlhzkzq1c0P3cBu_XdM0s"

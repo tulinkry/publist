@@ -1,0 +1,754 @@
+{block wrapper}
+    <!DOCTYPE html>
+    <html>
+    <head>
+    	<meta charset="utf-8">
+
+    	<title>Publist{block title} | Hodnocení restaurací{/block}</title>
+
+    	{control css}
+        {control css 'business-template.css'}
+    	{control js}
+        <script>
+            var basePath = {$basePath};
+        </script>
+    	<link rel="shortcut icon" href="{$basePath}/favicon.ico">
+    	<meta name="viewport" content="width=device-width">
+    	{block head}{/block}
+    </head>
+
+    <body>
+
+    	{block nav}
+        <!-- Navigation -->
+        <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            <div class="container">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="{link Pub:default}">Publist</a>
+                </div>
+
+
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>{control searchForm}</li>
+
+                        {if $user->isLoggedIn()}
+                            {if $user->isAllowed('backend')}
+                                <li>
+                                    <a href="{link :Admin:Homepage:default}">Administrace</a>
+                                </li>
+                            {/if}
+                            <li>
+                                <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                                  Odhlásit <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                  <li><a href="{link logout!}">Odhlásit</a></li>
+                                  <li><a href="{link :Front:Settings:default}">Nastavení</a></li>
+                                </ul>
+                            </li>
+                        {else}
+                            <li>
+                                <a href="{link Sign:login}">Přihlásit</a>
+                            </li>
+                        {/if}
+                        <li>
+                            <a href="{link Ladder:default}">Žebříčky</a>
+                        </li>
+                        <li>
+                            <a href="{link Ladder:closest}">Nejbližší</a>
+                        </li>                    
+                        <li>
+                            <a href="{link Contact:about}">O nás</a>
+                        </li>
+                        <li>
+                            <a href="{link Contact:default}">Kontakt</a>
+                        </li>
+
+                    </ul>
+                </div>
+                <!-- /.navbar-collapse -->
+            </div>
+            <!-- /.container -->
+        </nav>
+    	{/block}
+
+    	{*sliderPictures*}
+
+    	{block slides}
+        <!-- Header Carousel -->
+        <header id="myCarousel" class="carousel slide">
+            <!-- Indicators -->
+            <ol class="carousel-indicators">
+                <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+                {for $i = 1; $i <= count($sliderPictures) - 1; $i ++ }
+                    <li data-target="#myCarousel" data-slide-to="{$i}"></li>
+                {/for}
+            </ol>
+
+            <!-- Wrapper for slides -->
+            <div class="carousel-inner">
+                <div n:foreach="$sliderPictures as $pic" n:class="$iterator->first ? 'item active' : 'item'">
+                    
+                    <div class="fill hidden-xs hidden-sm hidden-md" style="background-image:url('{$basePath}/{$pic->sliderDir}/{$pic->sliderSettings['lg']}/{$pic->path}');"></div>
+                    <div class="fill hidden-lg hidden-sm hidden-xs" style="background-image:url('{$basePath}/{$pic->sliderDir}/{$pic->sliderSettings['md']}/{$pic->path}');"></div>
+                    <div class="fill hidden-lg hidden-md hidden-xs" style="background-image:url('{$basePath}/{$pic->sliderDir}/{$pic->sliderSettings['sm']}/{$pic->path}');"></div>
+                    <div class="fill hidden-lg hidden-sm hidden-md" style="background-image:url('{$basePath}/{$pic->sliderDir}/{$pic->sliderSettings['xs']}/{$pic->path}');"></div>
+                    {*
+                    <img style="display:none" src="{$basePath}/{$pic->sliderDir}/{$pic->sliderSettings['lg']}/{$pic->path}">
+                    *}
+
+                    {*<div class="carousel-caption">
+                        <h2>Caption {$iterator->counter}</h2>
+                    </div>*}
+                </div>
+            </div>
+
+            <!-- Controls -->
+            <a class="left carousel-control" href="#myCarousel" data-slide="prev">
+                <span class="icon-prev"></span>
+            </a>
+            <a class="right carousel-control" href="#myCarousel" data-slide="next">
+                <span class="icon-next"></span>
+            </a>
+        </header>
+        {/block}
+
+    	{block page}
+        <!-- Page Content -->
+        <div class="{block container_class}container{/block} content" id="publist">
+
+            {if count($flashes)}
+                <div class="row">
+                    <div class="col-lg-12">
+                        <ol class="list-group">
+                            <li n:foreach="$flashes as $flash" n:class="'list-group-item', flash, alert, 'alert-'.$flash->type">{$flash->message}</li>
+                        </ol>
+                    </div>
+                </div>      
+            {/if}
+
+                
+                <!--
+            <div class="row">
+                <div class="col-lg-12">
+                    {block heading}
+                        <h1 class="page-header">
+                        </h1>
+                    {/block}
+                </div>
+                    <div class="col-lg-12">
+                        <ol class="breadcrumb">
+                            {block navigation}
+                                <li><a href="index.html">Home</a>
+                                </li>
+                                <li class="active">Blog Home Two</li>
+                            {/block}
+                        </ol>
+                    </div>
+            </div>
+                -->        
+                
+
+            <div class="row">
+                {block main-content-row}
+                    {block content-column}
+                        <article class="col-lg-9">
+                    		{block content}
+                    		{/block}
+                        </article>
+                    {/block}
+                    {block side-panel-column}
+                        <aside class="col-lg-3 side-panel">
+                            {block side-panel}
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h4>Naposledy přidané</h4>
+                                    </div>
+                                    <ul class="panel-body list-group" n:snippet="last">
+                                        <li class="list-group-item" n:foreach="$last as $pub">
+                                            {if $user->loggedIn && 
+                                                isset($userClass) && 
+                                                $userClass &&
+                                                $userClass->hasRated($pub)}
+                                                <img src="{$basePath}/images/tick/tick.png" class="star" />
+                                            {/if}
+                                            <a href="{link Pub:detail $pub->id}" title="{$pub->wholeName} detaily">
+                                                {$pub->wholeName}
+                                            </a>
+                                            <small class="nowrap">
+                                            ({$pub->inserted|timeleft})
+                                            </small>
+                                        </li>
+                                        <li n:if="count($last)" class="list-group-item">
+                                            <a href="{link nextLast! $lastOffset}" title="Nahraj další" class="ajax label label-primary">Další</a>
+                                        </li>
+                                        <li n:if="!count($last)" class="list-group-item">
+                                           Žádné další nenalezeny
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h4>Nově ohodnocené</h4>
+                                    </div>
+                                    <ul class="panel-body list-group" n:snippet="rated">
+                                        <li class="list-group-item" n:foreach="$rated as $pub">
+                                            {if $user->loggedIn && 
+                                                isset($userClass) && 
+                                                $userClass &&
+                                                $userClass->hasRated($pub)}
+                                                <img src="{$basePath}/images/tick/tick.png" class="star" />
+                                            {/if}
+                                            <a href="{link Pub:detail $pub->id}" title="{$pub->wholeName} detaily">{$pub->wholeName}</a>
+                                            <small n:if="$pub->ratings->count()" class="nowrap">
+                                            ({$pub->ratings[0]->date|timeleft} - {$pub->ratings[0]->user->username})
+                                            </small>
+                                        </li>
+                                        <li n:if="count($rated)" class="list-group-item">
+                                            <a href="{link nextRated! $ratedOffset}" title="Nahraj další" class="ajax label label-primary">Další</a>
+                                        </li>
+                                        <li n:if="!count($rated)" class="list-group-item">
+                                           Žádné další nenalezeny
+                                        </li>
+                                    </ul>
+                                </div>
+                            {/block}
+                        </aside>    
+                    {/block}
+                {/block}
+            </div>
+
+            <hr>
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <endora></endora>
+                    {control dialog}
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <footer>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <p>Copyright &copy; Publist 2015</p>
+                    </div>
+                </div>
+            </footer>
+        </div>
+        <!-- /.container -->
+        {/block}
+
+        {include google-analytics}
+
+    </body>
+    </html>
+{/block}
+
+{define google-analytics}
+    <script n:if="!$debugMode">
+      (function(i,s,o,g,r,a,m){l}i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){l}
+      (i[r].q=i[r].q||[]).push(arguments){r},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      {r})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-67592515-1', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+{/define}
+
+{define google-logo}
+<img src="{$basePath}/images/google/powered-by-google-on-white.png" title="Google logo" alt="Google logo" />
+{/define}
+
+
+{define descriptionFormTemplate}
+    {form descriptionForm}
+        <ul class="errors" n:if="$form->hasErrors()">
+            <li n:foreach="$form->errors as $error" class="alert alert-danger">{$error}</li>
+        </ul>     
+
+        <div class="form-group required clearfix">
+            <div class="sr-only">
+                {label text /}
+            </div>
+            {input text}
+        </div>   
+
+        <div class="form-group clearfix">
+            {label submit /}{input submit}
+        </div>
+    {/form}
+{/define}
+
+{define beerFormTemplate}
+    {form beerForm}
+        <ul class="errors" n:if="$form->hasErrors()">
+            <li n:foreach="$form->errors as $error" class="alert alert-danger">{$error}</li>
+        </ul>
+
+        <div class="form-group required clearfix">
+            <div class="col-sm-3 control-label">
+                {label name /}
+            </div>
+            <div class="col-sm-9">
+                {input name}
+            </div>
+        </div>
+
+        <div class="form-group clearfix">
+            <div class="col-sm-3 control-label">
+                {label degree /}
+            </div>
+            <div class="col-sm-9">
+                {input degree}
+            </div>
+        </div>
+
+        <div class="form-group clearfix">
+            <div class="col-sm-3 control-label">
+                {label link /}
+            </div>
+            <div class="col-sm-9">
+                <div class="input-group">
+                    {input link}
+                    <a class="input-group-addon" title="Načíst externí dotazy automaticky" href="#">
+                        <span class="glyphicon glyphicon-refresh"></span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="form-group clearfix">
+            <div class="col-sm-3 control-label">
+                {label submit /}
+            </div>
+            <div class="col-sm-9">
+                {input submit}
+            </div>
+        </div>
+
+    {/form}
+{/define}
+
+
+{define pubFormTemplate}
+    {form pubForm}
+        <ul class="errors" n:if="$form->hasErrors()">
+            <li n:foreach="$form->errors as $error" class="alert alert-danger">{$error}</li>
+        </ul>
+
+        <div n:if="$form->offsetExists('agreement')" class="form-group {$form['agreement']->getOption('hidden') ? 'hidden'}">
+            <div class="col-sm-12">
+                <div class="control-label">
+                    <label for="{$form['agreement']->getHtmlId()}">{$form['agreement']->caption}</label>
+                </div>
+                <div class="input-group">
+                    {$form['agreement']->caption = null}                
+                    {input agreement}
+                    <a class="input-group-addon" 
+                          data-container="body" 
+                          data-toggle="popover" 
+                          data-placement="top"
+                          data-trigger="focus"
+                          tabindex="0"
+                          data-content="{$form['agreement']->getControlPrototype()->data['content']}"
+                          title="{$form['agreement']->getControlPrototype()->data['heading']}">
+                          ?
+                    </a>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+
+
+        <div class="form-group required">
+            <div class="col-sm-12">
+                <div class="control-label">
+                    {label whole_name /}
+                </div>
+                <div class="input-group">
+                    {input whole_name}
+                    <a class="input-group-addon" 
+                          data-container="body" 
+                          data-toggle="popover" 
+                          data-placement="top"
+                          data-trigger="focus"
+                          tabindex="0"
+                          data-content="{$form['whole_name']->getControlPrototype()->data['content']}"
+                          title="{$form['whole_name']->getControlPrototype()->data['heading']}">
+                          ?
+                    </a>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+
+        <div class="form-group required">
+            <div class="col-sm-4">
+                <div class="control-label">
+                    {label type /}
+                </div>
+                <div class="input-group">
+                    {input type}
+                    <a class="input-group-addon" 
+                          data-container="body" 
+                          data-toggle="popover" 
+                          data-placement="top"
+                          data-trigger="focus"
+                          tabindex="0"
+                          data-content="{$form['type']->getControlPrototype()->data['content']}"
+                          title="{$form['type']->getControlPrototype()->data['heading']}">
+                          ?
+                    </a>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="control-label">
+                    {label name /}
+                </div>
+                <div class="input-group">               
+                    {input name}
+                    <a class="input-group-addon" 
+                          data-container="body" 
+                          data-toggle="popover" 
+                          data-placement="top"
+                          data-trigger="focus"
+                          tabindex="0"
+                          data-content="{$form['name']->getControlPrototype()->data['content']}"
+                          title="{$form['name']->getControlPrototype()->data['heading']}">
+                          ?
+                    </a>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="control-label">
+                    <span class="glyphicon glyphicon-wrench"></span>
+                </div>
+                <a href="#" id="pubForm-enable" class="btn btn-info">Vypnout našeptávání</a>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+
+        <div class="form-group required">
+            <div class="col-sm-12">
+                <div class="control-label">
+                    {label long_name /}
+                </div>
+                <div class="input-group">
+                    {input long_name}
+                    <a class="input-group-addon" 
+                          data-container="body" 
+                          data-toggle="popover" 
+                          data-placement="top"
+                          data-trigger="focus"
+                          tabindex="0"
+                          data-content="{$form['long_name']->getControlPrototype()->data['content']}"
+                          title="{$form['long_name']->getControlPrototype()->data['heading']}">
+                          ?
+                    </a>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-sm-12">
+                <div class="control-label">
+                    {label opening_hours /}
+                </div>
+                <div class="input-group">               
+                    {input opening_hours}
+                    <a class="input-group-addon" 
+                          data-container="body" 
+                          data-toggle="popover" 
+                          data-placement="top"
+                          data-trigger="focus"
+                          tabindex="0"
+                          data-content="{$form['opening_hours']->getControlPrototype()->data['content']}"
+                          title="{$form['opening_hours']->getControlPrototype()->data['heading']}">
+                          ?
+                    </a>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-sm-12">
+                <div class="control-label">
+                    {label website /}
+                </div>
+                <div class="input-group">               
+                    {input website}
+                    <a class="input-group-addon" 
+                          data-container="body" 
+                          data-toggle="popover" 
+                          data-placement="top"
+                          data-trigger="focus"
+                          tabindex="0"
+                          data-content="{$form['website']->getControlPrototype()->data['content']}"
+                          title="{$form['website']->getControlPrototype()->data['heading']}">
+                          ?
+                    </a>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-sm-12">
+                <div class="control-label">
+                    {label coords /}
+                </div>
+                {input coords}
+            </div>
+            <div class="clearfix"></div>
+        </div>
+
+        <hr />
+
+        <div class="form-group">
+            <div class="col-sm-6 col-sm-offset-3">
+                {input submit}
+            </div>
+        </div>
+    {/form}
+{/define}
+
+{define alternatePubFormTemplate}
+    {form alternatePubForm}
+        <ul class="errors" n:if="$form->hasErrors()">
+            <li n:foreach="$form->errors as $error" class="alert alert-danger">{$error}</li>
+        </ul>
+
+        <div n:if="$form->offsetExists('agreement')" class="form-group {$form['agreement']->getOption('hidden') ? 'hidden'}">
+            <div class="col-sm-12">
+                <div class="control-label">
+                    <label for="{$form['agreement']->getHtmlId()}">{$form['agreement']->caption}</label>
+                </div>
+                <div class="input-group">
+                    {$form['agreement']->caption = null}                
+                    {input agreement}
+                    <a class="input-group-addon" 
+                          data-container="body" 
+                          data-toggle="popover" 
+                          data-placement="top"
+                          data-trigger="focus"
+                          tabindex="0"
+                          data-content="{$form['agreement']->getControlPrototype()->data['content']}"
+                          title="{$form['agreement']->getControlPrototype()->data['heading']}">
+                          ?
+                    </a>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+
+
+        <div class="form-group required">
+            <div class="col-sm-8">
+                <div class="control-label">
+                    {label whole_name /}
+                </div>
+                <div class="input-group">
+                    {input whole_name}
+                    <a class="input-group-addon" 
+                          data-container="body" 
+                          data-toggle="popover" 
+                          data-placement="top"
+                          data-trigger="focus"
+                          tabindex="0"
+                          data-content="{$form['whole_name']->getControlPrototype()->data['content']}"
+                          title="{$form['whole_name']->getControlPrototype()->data['heading']}">
+                          ?
+                    </a>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="control-label">
+                    <span class="glyphicon glyphicon-wrench"></span>
+                </div>
+                {$form['whole_name']->getOption('description')}
+            </div>
+            <div class="clearfix"></div>
+        </div>
+
+        <div class="form-group required">
+            <div class="col-sm-4">
+                <div class="control-label">
+                    {label type /}
+                </div>
+                <div class="input-group">
+                    {input type}
+                    <a class="input-group-addon" 
+                          data-container="body" 
+                          data-toggle="popover" 
+                          data-placement="top"
+                          data-trigger="focus"
+                          tabindex="0"
+                          data-content="{$form['type']->getControlPrototype()->data['content']}"
+                          title="{$form['type']->getControlPrototype()->data['heading']}">
+                          ?
+                    </a>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="control-label">
+                    {label name /}
+                </div>
+                <div class="input-group">               
+                    {input name}
+                    <a class="input-group-addon" 
+                          data-container="body" 
+                          data-toggle="popover" 
+                          data-placement="top"
+                          data-trigger="focus"
+                          tabindex="0"
+                          data-content="{$form['name']->getControlPrototype()->data['content']}"
+                          title="{$form['name']->getControlPrototype()->data['heading']}">
+                          ?
+                    </a>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="control-label">
+                    <span class="glyphicon glyphicon-wrench"></span>
+                </div>
+                <a href="#" id="pubForm-enable" class="btn btn-info">Vypnout našeptávání</a>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+
+        <div class="form-group required">
+            <div class="col-sm-12">
+                <div class="control-label">
+                    {label long_name /}
+                </div>
+                <div class="input-group">
+                    {input long_name}
+                    <a class="input-group-addon" 
+                          data-container="body" 
+                          data-toggle="popover" 
+                          data-placement="top"
+                          data-trigger="focus"
+                          tabindex="0"
+                          data-content="{$form['long_name']->getControlPrototype()->data['content']}"
+                          title="{$form['long_name']->getControlPrototype()->data['heading']}">
+                          ?
+                    </a>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-sm-12">
+                <div class="control-label">
+                    {label opening_hours /}
+                </div>
+                <div class="input-group">               
+                    {input opening_hours}
+                    <a class="input-group-addon" 
+                          data-container="body" 
+                          data-toggle="popover" 
+                          data-placement="top"
+                          data-trigger="focus"
+                          tabindex="0"
+                          data-content="{$form['opening_hours']->getControlPrototype()->data['content']}"
+                          title="{$form['opening_hours']->getControlPrototype()->data['heading']}">
+                          ?
+                    </a>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-sm-12">
+                <div class="control-label">
+                    {label website /}
+                </div>
+                <div class="input-group">               
+                    {input website}
+                    <a class="input-group-addon" 
+                          data-container="body" 
+                          data-toggle="popover" 
+                          data-placement="top"
+                          data-trigger="focus"
+                          tabindex="0"
+                          data-content="{$form['website']->getControlPrototype()->data['content']}"
+                          title="{$form['website']->getControlPrototype()->data['heading']}">
+                          ?
+                    </a>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+
+        <div class="form-group required">
+            <div class="col-sm-4">
+                <div class="control-label">
+                    {label lat /}
+                </div>
+                <div class="input-group">
+                    {input lat}
+                    <a class="input-group-addon" 
+                          data-container="body" 
+                          data-toggle="popover" 
+                          data-placement="top"
+                          data-trigger="focus"
+                          tabindex="0"
+                          data-content="{$form['lat']->getControlPrototype()->data['content']}"
+                          title="{$form['lat']->getControlPrototype()->data['heading']}">
+                          ?
+                    </a>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="control-label">
+                    {label lng /}
+                </div>
+                <div class="input-group">               
+                    {input lng}
+                    <a class="input-group-addon" 
+                          data-container="body" 
+                          data-toggle="popover" 
+                          data-placement="top"
+                          data-trigger="focus"
+                          tabindex="0"
+                          data-content="{$form['lng']->getControlPrototype()->data['content']}"
+                          title="{$form['lng']->getControlPrototype()->data['heading']}">
+                          ?
+                    </a>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="control-label">
+                    <a href="#" class="pubForm-location label label-primary">Zjistit aktuální polohu</a href="#">
+                </div>
+                <span id="alternatePubForm-accuracy"></span>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+
+        <hr />
+
+        <div class="form-group">
+            <div class="col-sm-6 col-sm-offset-3">
+                {input submit}
+            </div>
+        </div>
+    {/form}
+{/define}

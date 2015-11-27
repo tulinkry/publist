@@ -1,0 +1,774 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="cs" xmlns:og="http://ogp.me/ns#" xmlns:fb="http://ogp.me/ns/fb#">
+
+
+
+
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>Piva - vyhledávání - Pivníci.cz</title>
+	<link rel="stylesheet" media="screen,projection,tv" href="/css/main.css?v=1.29" type="text/css" />
+	
+	<meta property="og:title" content="Piva - vyhledávání - Pivníci.cz" />
+	<meta property="og:url" content="http://www.pivnici.cz/hledat/piva/dle-data/?hledat[text]=Němý medvěd" />
+	<meta property="og:locale" content="cs_CZ" />
+	<meta property="og:type" content="article" />
+	<meta property="og:site_name" content="Pivníci.cz" />
+	<meta name="keywords" content="Pivníci.cz, pivo, ležák, beer, ale, stout, porter, lager, ipa, apa, lambic, články, recenze" />
+	<meta name="author" content="Marley &amp; Bludice" />
+	<meta name="copyright" content="(c) 2011-2015 Marley &amp; Bludice" />
+	<meta property="fb:admins" content="1789821390,1794692958" />
+	<meta property="fb:app_id" content="230058363722495" />
+	<meta property="twitter:card" content="summary_large_image" />
+	<meta property="twitter:site" content="@pivnici" />
+	<meta name="viewport" content="width=device-width,initial-scale=1" />
+	<meta name="description" content="Němý Medvěd Brtník     Němý Medvěd Čmoud     Němý Medvěd Baribal polotmavý ležák     Němý medvěd Baribal polotmavý speciál" />
+	<meta property="og:description" content="Němý Medvěd Brtník     Němý Medvěd Čmoud     Němý Medvěd Baribal polotmavý ležák     Němý medvěd Baribal polotmavý speciál" />
+	<meta property="og:image" content="http://www.pivnici.cz/foto/00/98d5226e080cd4ddb9bb10a142927fb.jpg" />
+	<meta property="og:image" content="http://www.pivnici.cz/foto/69/bfd3ae2a6857f0e6b5232b85d0ae93b.jpg" />
+	<meta property="og:image" content="http://www.pivnici.cz/foto/13/2428d7fbdddda0bbdbe00108676d85b.jpg" />
+	<meta property="og:image" content="http://www.pivnici.cz/foto/a3/e7f5edadf9029925befcfe85fc88dab.jpg" />
+
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-28199819-1']);
+		_gaq.push(['_trackPageview']);
+		(function(){
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+<body data-homepage="">
+<div id="page" itemscope="itemscope" itemtype="http://schema.org/Thing">
+	<h1 itemprop="name">Piva - vyhledávání</h1>
+	<div id="body">
+	
+<div id="snippet--flashes"></div>	
+	<div id="content">
+<div id="mainText">
+	<div class="search">
+<form action="/hledat/piva/dle-data/?hledat%5Btext%5D=N%C4%9Bm%C3%BD+medv%C4%9Bd&amp;do=searchForm-submit" method="post" id="frm-searchForm">
+
+<table>
+<tr>
+	<th><label for="frmsearchForm-text">Hledat v názvu text</label></th>
+
+	<td><input type="text" class="text" name="text" id="frmsearchForm-text" value="Němý medvěd" /></td>
+</tr>
+
+<tr>
+	<th>&nbsp;</th>
+
+	<td><input type="submit" class="button" name="search" id="frmsearchForm-search" value="Vyhledat" /></td>
+</tr>
+</table>
+
+<div><!--[if IE]><input type=IEbug disabled style="display:none"><![endif]--></div>
+</form>
+	</div>
+		<div class="order controls">
+	Dle:
+			<a href="/hledat/piva/dle-abecedy/?hledat%5Btext%5D=N%C4%9Bm%C3%BD+medv%C4%9Bd">abecedy</a>
+			<a href="/hledat/piva/?hledat%5Btext%5D=N%C4%9Bm%C3%BD+medv%C4%9Bd">hodnocení</a>
+			<strong>&laquo; data přidání &raquo;</strong>
+			<a href="/hledat/piva/dle-alkoholu/?hledat%5Btext%5D=N%C4%9Bm%C3%BD+medv%C4%9Bd">procenta alkoholu</a>
+			<a href="/hledat/piva/dle-horkosti/?hledat%5Btext%5D=N%C4%9Bm%C3%BD+medv%C4%9Bd">hořkosti</a>
+	</div>
+		<div class="paging controls">
+	Strana: 
+	<b>&laquo; 1 &raquo;</b>
+	</div>
+
+	<div class="controls itemCount">Nalezeno piv: 4</div>
+	<div class="group">
+	
+	
+
+
+
+<div class="item">
+	<h2><a href="/pivo/nemy-medved-brtnik/">Němý Medvěd Brtník</a></h2>
+	
+	<div class="details">
+			<div class="ratingDescr">lehce nadprůměrné</div>
+				<div class="info"><span class="label">Pivní styl:</span> <a href="/piva-pivniho-stylu/svetly-lezak/">světlý ležák</a>
+</div>
+				<div class="info"><span class="label">Pivovar:</span> <a href="/piva-pivovaru/nemy-medved/">Němý Medvěd</a> <span class="minim">(<a href="/piva-pivovaru/mesto/melnik/">Mělník</a>, <a href="/piva-pivovaru/kraj/stredocesky-kraj/">Středočeský kraj</a>, <a href="/piva-pivovaru/zeme/ceska-republika/">Česká republika</a>)</span>
+</div>
+				<div class="info"><span class="label">Stupňovitost:</span> 12,<span class="mini">5</span>° Plato</div>
+		<div class="overview"><a class="button larger" href="/pivo/nemy-medved-brtnik/">Více informací a detailní hodnocení &raquo;</a></div>
+	</div>
+	<a href="/pivo/nemy-medved-brtnik/" class="photo lone " style="background-image: url('/foto/00/98d5226e080cd4ddb9bb10a142927fs.jpg'); width: 148px; height: 148px; margin: 8px 0px 15px 13px;"><span class="rating" title="Hodnocení: 4,75 / 10"><span class="min">4,8</span></span></a>
+	<div class="theEnd"></div>
+</div>
+	
+
+
+<div class="item">
+	<h2><a href="/pivo/nemy-medved-cmoud/">Němý Medvěd Čmoud</a></h2>
+	
+	<div class="details">
+			<div class="ratingDescr">velmi dobré</div>
+				<div class="info"><span class="label">Pivní styl:</span> <a href="/piva-pivniho-stylu/polotmavy-lezak/">polotmavý ležák</a><br /><a href="/piva-pivniho-stylu/nakurovane-pivo/">nakuřované pivo</a>
+</div>
+				<div class="info"><span class="label">Pivovar:</span> <a href="/piva-pivovaru/labut/">Labuť</a> <span class="minim">(<a href="/piva-pivovaru/mesto/litomerice/">Litoměřice</a>, <a href="/piva-pivovaru/kraj/ustecky-kraj/">Ústecký kraj</a>, <a href="/piva-pivovaru/zeme/ceska-republika/">Česká republika</a>)</span>
+</div>
+				<div class="info"><span class="label">Sezónní:</span> <a href="/piva-sezonni/filipojakubske-paleni-carodejnic/">filipojakubské (pálení čarodějnic)</a>
+</div>
+				<div class="info"><span class="label">Stupňovitost:</span> 11° Plato</div>
+		<div class="overview"><a class="button larger" href="/pivo/nemy-medved-cmoud/">Více informací a detailní hodnocení &raquo;</a></div>
+	</div>
+	<a href="/pivo/nemy-medved-cmoud/" class="photo lone " style="background-image: url('/foto/69/bfd3ae2a6857f0e6b5232b85d0ae93s.jpg'); width: 148px; height: 148px; margin: 8px 0px 15px 13px;"><span class="rating" title="Hodnocení: 7,5 / 10"><span class="min">7,5</span></span></a>
+	<div class="theEnd"></div>
+</div>
+	
+
+
+<div class="item">
+	<h2><a href="/pivo/nemy-medved-baribal-polotmavy-lezak/">Němý Medvěd Baribal polotmavý ležák</a></h2>
+	
+	<div class="details">
+			<div class="ratingDescr">horší pivo</div>
+				<div class="info"><span class="label">Pivní styl:</span> <a href="/piva-pivniho-stylu/polotmavy-lezak/">polotmavý ležák</a>
+</div>
+				<div class="info"><span class="label">Pivovar:</span> <a href="/piva-pivovaru/podkovan/">Podkováň</a> <span class="minim">(<a href="/piva-pivovaru/mesto/dolni-cetno/">Dolní Cetno</a>, <a href="/piva-pivovaru/kraj/stredocesky-kraj/">Středočeský kraj</a>, <a href="/piva-pivovaru/zeme/ceska-republika/">Česká republika</a>)</span>
+</div>
+				<div class="info"><span class="label">Stupňovitost:</span> 12° Plato</div>
+		<div class="overview"><a class="button larger" href="/pivo/nemy-medved-baribal-polotmavy-lezak/">Více informací a detailní hodnocení &raquo;</a></div>
+	</div>
+	<a href="/pivo/nemy-medved-baribal-polotmavy-lezak/" class="photo lone " style="background-image: url('/foto/13/2428d7fbdddda0bbdbe00108676d85s.jpg'); width: 148px; height: 148px; margin: 8px 0px 15px 13px;"><span class="rating" title="Hodnocení: 3 / 10"><span class="min">3</span></span></a>
+	<div class="theEnd"></div>
+</div>
+	
+
+
+<div class="item">
+	<h2><a href="/pivo/nemy-medved-baribal-polotmavy-special/">Němý medvěd Baribal polotmavý speciál</a></h2>
+	
+	<div class="details">
+			<div class="ratingDescr">průměrné pivo</div>
+				<div class="info"><span class="label">Pivní styl:</span> <a href="/piva-pivniho-stylu/polotmavy-special/">polotmavý speciál</a>
+</div>
+				<div class="info"><span class="label">Pivovar:</span> <a href="/piva-pivovaru/podkovan/">Podkováň</a> <span class="minim">(<a href="/piva-pivovaru/mesto/dolni-cetno/">Dolní Cetno</a>, <a href="/piva-pivovaru/kraj/stredocesky-kraj/">Středočeský kraj</a>, <a href="/piva-pivovaru/zeme/ceska-republika/">Česká republika</a>)</span>
+</div>
+				<div class="info"><span class="label">Stupňovitost:</span> 13,<span class="mini">6</span>° Plato</div>
+				<div class="info"><span class="label">Obsah alkoholu:</span> <span class="min">5,8</span> %</div>
+		<div class="overview"><a class="button larger" href="/pivo/nemy-medved-baribal-polotmavy-special/">Více informací a detailní hodnocení &raquo;</a></div>
+	</div>
+	<a href="/pivo/nemy-medved-baribal-polotmavy-special/" class="photo lone " style="background-image: url('/foto/a3/e7f5edadf9029925befcfe85fc88das.jpg'); width: 148px; height: 148px; margin: 8px 0px 15px 13px;"><span class="rating" title="Hodnocení: 4,5 / 10"><span class="min">4,5</span></span></a>
+	<div class="theEnd"></div>
+</div>
+		
+	
+	
+	</div>
+</div>
+<div class="lightBreak"></div>
+
+	<div class="itemDetails firstWidget">
+		<div class="social-link">
+			<h3 class="fb"><a href="http://www.facebook.com/pivnici" onclick="return !window.open(this.href);">Pivníci na Facebooku:</a></h3>
+			<div class="fbLike"><div id="fb-root"></div>
+			<script>(function(d, s, id) {
+				var js, fjs = d.getElementsByTagName(s)[0];
+				if (d.getElementById(id)) return;
+				js = d.createElement(s); js.id = id;
+				js.src = "//connect.facebook.net/cs_CZ/sdk.js#xfbml=1&version=v2.3&appId=230058363722495";
+				fjs.parentNode.insertBefore(js, fjs);
+			}(document, "script", "facebook-jssdk"));</script><fb:like href="http://www.facebook.com/pivnici" send="false" width="180" show_faces="false" layout="box_count" share="false"></fb:like></div>
+		</div>
+		<div class="social-link">
+			<h3><a href="http://twitter.com/pivnici" onclick="return !window.open(this.href);">Pivníci na Twitteru:</a> <a href="http://twitter.com/pivnici" onclick="return !window.open(this.href);" class="socialIcon twitter"></a></h3>
+		</div>
+		<div class="social-link">
+			<h3><a href="http://feeds.feedburner.com/pivnici" onclick="return !window.open(this.href);">Pivníci RSS kanál:</a> <a href="http://feeds.feedburner.com/pivnici" onclick="return !window.open(this.href);" class="socialIcon rss"></a></h3>
+		</div>
+		<div class="social-link">
+			<h3><a href="http://feeds.feedburner.com/pivnici-piva" onclick="return !window.open(this.href);">RSS nová piva:</a> <a href="http://feeds.feedburner.com/pivnici-piva" onclick="return !window.open(this.href);" class="socialIcon rss"></a></h3>
+		</div>
+		<div class="social-link">
+			<h3><a href="https://plus.google.com/+PivniciCz" onclick="return !window.open(this.href);">Pivníci na Google+:</a> <a href="https://plus.google.com/+PivniciCz" onclick="return !window.open(this.href);" class="socialIcon gplus"></a></h3>
+		</div>
+		<div class="social-link">
+<form action="/hledat/piva/dle-data/?hledat%5Btext%5D=N%C4%9Bm%C3%BD+medv%C4%9Bd&amp;do=widgets-quickSearchForm-submit" method="post" id="frm-widgets-quickSearchForm">		<div>
+			<h3>Hledat články, piva, pivovary...:</h3>
+		<input type="text" name="text" id="frmquickSearchForm-text" value="" /> <input type="submit" name="search" id="frmquickSearchForm-search" value="Vyhledat" />
+		</div>
+<div><!--[if IE]><input type=IEbug disabled style="display:none"><![endif]--></div>
+</form>
+		</div>
+		
+	</div>
+	<div class="itemDetails">
+		<div>
+		<h3><a href="/mapa-ceskych-pivovaru-a-minipivovaru/">Mapa českých pivovarů</a></h3>
+		<div class="imageMain map"><a href="/mapa-ceskych-pivovaru-a-minipivovaru/" class="author" style="width: 244px;"><span style="height: 146px; background-image: url('http://www.pivnici.cz/foto/e1/310b26faf82590ffb3010a93186abdm.jpg');" title="Mapa pivovarů"><span style="display: none;">Mapa pivovarů a minipivovarů v ČR</span></span></a></div>
+		</div>
+	</div>
+	<div class="itemDetails">
+		<h3>Nejnovější články:</h3>
+		<ul class="fotos clanky">
+			<li>
+				<a class="foto" href="/clanek/slavkovsky-helles-strahov-cherry-mild-permon-equinox-clock-fanous-a-dalsi-pivni-novinky/" style="background-image: url('/foto/a1/35f6eda0a2a262a5e6173f28e708b6t.jpg');"></a>
+				<span class="label">
+					<a href="/clanek/slavkovsky-helles-strahov-cherry-mild-permon-equinox-clock-fanous-a-dalsi-pivni-novinky/">Slavkovský Helles, Strahov Cherry Mild, Permon Equinox, Clock Fanouš a další pivní novinky</a><br />
+				<em>Marley, 4. září 2015</em>
+				</span>
+			</li>
+			<li>
+				<a class="foto" href="/clanek/novy-prazsky-pivovar-u-dobrenskych/" style="background-image: url('/foto/a3/40ff028a393921e7969b55ce33944et.jpg');"></a>
+				<span class="label">
+					<a href="/clanek/novy-prazsky-pivovar-u-dobrenskych/">Nový pražský pivovar U Dobřenských</a><br />
+				<em>Marley, 2. září 2015</em>
+				</span>
+			</li>
+			<li>
+				<a class="foto" href="/clanek/pivnici-potreti-v-novem/" style="background-image: url('/foto/58/abbfc7c660eb8b1ecfce7864e2f54bt.jpg');"></a>
+				<span class="label">
+					<a href="/clanek/pivnici-potreti-v-novem/">Pivníci potřetí v novém</a><br />
+				<em>Marley, 31. srpna 2015</em>
+				</span>
+			</li>
+			<li>
+				<a class="foto" href="/clanek/mozaika-matuska-fest-plny-vyborneho-piva-i-jidla/" style="background-image: url('/foto/ad/9ffbc3ecae70559dee53ba3cb240det.jpg');"></a>
+				<span class="label">
+					<a href="/clanek/mozaika-matuska-fest-plny-vyborneho-piva-i-jidla/">Mozaika &amp; Matuška fest plný výborného piva i jídla</a><br />
+				<em>Marley, 28. srpna 2015</em>
+				</span>
+			</li>
+			<li>
+				<a class="foto" href="/clanek/posmutnele-uneticke-posviceni-novy-pivovar-nemy-medved-a-treti-narozeniny-jeho-restaurace/" style="background-image: url('/foto/88/6a8ef6d0d3f54343ed057bb7c2c554t.jpg');"></a>
+				<span class="label">
+					<a href="/clanek/posmutnele-uneticke-posviceni-novy-pivovar-nemy-medved-a-treti-narozeniny-jeho-restaurace/">Posmutnělé Únětické posvícení, nový pivovar Němý Medvěd a třetí narozeniny jeho restaurace</a><br />
+				<em>Marley, 21. srpna 2015</em>
+				</span>
+			</li>
+		</ul>
+		<div class="theEnd"></div>
+		<div class="overview"><a href="/seznam/clanky/">Další nové články &raquo;</a></div>
+	</div>
+	<div class="itemDetails">
+		<h3>
+			Nově ochutnaná piva:
+		</h3>
+		<ul class="fotos clanky">
+			<li>
+				<a class="foto" href="/pivo/t-e-a-time-black-prince/" style="background-image: url('/foto/76/2922a0d6deb966f222480588bc5511t.jpg');"></a>
+				<span class="label">
+					<a href="/pivo/t-e-a-time-black-prince/">T.E.A. Time Black Prince</a><br />
+					<span class="date">8. 9.</span><span class="rate"><span class="min">8,5</span></span><span class="stars"> <span class="star" style="width: 128px"></span><span class="star lone" style="background-size: 68%; margin-right: -6px;"></span></span>
+				</span>
+			</li>
+			<li>
+				<a class="foto" href="/pivo/pinta-brasserie-du-pays-flamand-krol-lata-le-roi-de-l-ete/" style="background-image: url('/foto/3c/8543d93183538b9f97268c50218dfet.jpg');"></a>
+				<span class="label">
+					<a href="/pivo/pinta-brasserie-du-pays-flamand-krol-lata-le-roi-de-l-ete/">Pinta / Brasserie du Pays Flamand - Król Lata / le Roi de l’Eté</a><br />
+					<span class="date">8. 9.</span><span class="rate"><span class="min">6</span></span><span class="stars"> <span class="star" style="width: 96px"></span></span>
+				</span>
+			</li>
+			<li>
+				<a class="foto" href="/pivo/pohjala-oo/" style="background-image: url('/foto/17/efd38659331c45436016536f0c499bt.jpg');"></a>
+				<span class="label">
+					<a href="/pivo/pohjala-oo/">Põhjala ÖÖ</a><br />
+					<span class="date">8. 9.</span><span class="rate"><span class="min">9,5</span></span><span class="stars"> <span class="star" style="width: 144px"></span><span class="star lone" style="background-size: 68%; margin-right: -6px;"></span></span>
+				</span>
+			</li>
+			<li>
+				<a class="foto" href="/pivo/piwne-podziemie-grodzilla-dudette/" style="background-image: url('/foto/de/468c8ccbd0acd5208375f585239778t.jpg');"></a>
+				<span class="label">
+					<a href="/pivo/piwne-podziemie-grodzilla-dudette/">Piwne Podziemie Grodzilla Dudette</a><br />
+					<span class="date">7. 9.</span><span class="rate"><span class="min">6</span></span><span class="stars"> <span class="star" style="width: 96px"></span></span>
+				</span>
+			</li>
+			<li>
+				<a class="foto" href="/pivo/kormoran-podroze-kormorana-coffee-stout/" style="background-image: url('/foto/71/1f0de8c0f9e5c3e2132e28ea6c32bct.jpg');"></a>
+				<span class="label">
+					<a href="/pivo/kormoran-podroze-kormorana-coffee-stout/">Kormoran Podróże Kormorana Coffee Stout</a><br />
+					<span class="date">7. 9.</span><span class="rate"><span class="min">6,5</span></span><span class="stars"> <span class="star" style="width: 96px"></span><span class="star lone" style="background-size: 68%; margin-right: -6px;"></span></span>
+				</span>
+			</li>
+			<li>
+				<a class="foto" href="/pivo/u-tri-ruzi-zitny-special/" style="background-image: url('/foto/98/23179676cc2e32aec66cdc118d3966t.jpg');"></a>
+				<span class="label">
+					<a href="/pivo/u-tri-ruzi-zitny-special/">U Tří růží Žitný speciál</a><br />
+					<span class="date">6. 9.</span><span class="rate"><span class="min">5,5</span></span><span class="stars"> <span class="star" style="width: 80px"></span><span class="star lone" style="background-size: 68%; margin-right: -6px;"></span></span>
+				</span>
+			</li>
+			<li>
+				<a class="foto" href="/pivo/u-tri-ruzi-pale-ale/" style="background-image: url('/foto/3d/466d0e994acbdbfeb2256ed805721bt.jpg');"></a>
+				<span class="label">
+					<a href="/pivo/u-tri-ruzi-pale-ale/">U Tří růží Pale Ale</a><br />
+					<span class="date">6. 9.</span><span class="rate"><span class="min">3</span></span><span class="stars"> <span class="star" style="width: 48px"></span></span>
+				</span>
+			</li>
+			<li>
+				<a class="foto" href="/pivo/kolcavka-ira/" style="background-image: url('/foto/6e/eacdb504e0b04f4712c917eafa51ddt.jpg');"></a>
+				<span class="label">
+					<a href="/pivo/kolcavka-ira/">Kolčavka IRA</a><br />
+					<span class="date">5. 9.</span><span class="rate"><span class="min">5</span></span><span class="stars"> <span class="star" style="width: 80px"></span></span>
+				</span>
+			</li>
+			<li>
+				<a class="foto" href="/pivo/prager-laffe-brownie/" style="background-image: url('/foto/06/e2da865c4e379dcc880a1587349fd9t.jpg');"></a>
+				<span class="label">
+					<a href="/pivo/prager-laffe-brownie/">Prager Laffe Brownie</a><br />
+					<span class="date">5. 9.</span><span class="rate"><span class="min">4</span></span><span class="stars"> <span class="star" style="width: 64px"></span></span>
+				</span>
+			</li>
+			<li>
+				<a class="foto" href="/pivo/slavkovsky-helles/" style="background-image: url('/foto/d4/66d999b349c1681b72b5a761df0eaft.jpg');"></a>
+				<span class="label">
+					<a href="/pivo/slavkovsky-helles/">Slavkovský Helles</a><br />
+					<span class="date">5. 9.</span><span class="rate"><span class="min">7</span></span><span class="stars"> <span class="star" style="width: 112px"></span></span>
+				</span>
+			</li>
+		</ul>
+		<div class="theEnd"></div>
+		<div class="overview"><a href="/seznam/piva/dle-data/">Další nově ochutnaná piva &raquo;</a></div>
+	</div>
+	<div class="itemDetails">
+		<h3>
+			Nově navštívěné hospody:
+		</h3>
+		<ul class="fotos clanky">
+			<li>
+				<a class="foto" href="/hospoda/braugasthof-falkenstein/" style="background-image: url('/foto/98/d79921e2cc739a7756fd57ae048af9t.jpg');"></a>
+				<span class="label">
+					<a href="/hospoda/braugasthof-falkenstein/">Braugasthof Falkenstein</a><br />
+					<span class="date">30. 3.</span><span class="rate"><span class="min">6,5</span></span><span class="stars"> <span class="star" style="width: 96px"></span><span class="star lone" style="background-size: 68%; margin-right: -6px;"></span></span>
+				</span>
+			</li>
+			<li>
+				<a class="foto" href="/hospoda/brauerei-gasthof-hotel-post-nesselwang/" style="background-image: url('/foto/b1/092c97c143910f48a1b2a62d35e761t.jpg');"></a>
+				<span class="label">
+					<a href="/hospoda/brauerei-gasthof-hotel-post-nesselwang/">Brauerei-Gasthof Hotel Post Nesselwang</a><br />
+					<span class="date">27. 3.</span><span class="rate"><span class="min">7,5</span></span><span class="stars"> <span class="star" style="width: 112px"></span><span class="star lone" style="background-size: 68%; margin-right: -6px;"></span></span>
+				</span>
+			</li>
+			<li>
+				<a class="foto" href="/hospoda/zoigl-kaufbeuren/" style="background-image: url('/foto/03/7ee92d06b7a412b92363f27786397bt.jpg');"></a>
+				<span class="label">
+					<a href="/hospoda/zoigl-kaufbeuren/">Zoigl Kaufbeuren</a><br />
+					<span class="date">25. 3.</span><span class="rate"><span class="min">7</span></span><span class="stars"> <span class="star" style="width: 112px"></span></span>
+				</span>
+			</li>
+		</ul>
+		<div class="theEnd"></div>
+		<div class="overview"><a href="/seznam/hospody/dle-data/">Další nově navštívěné hospody &raquo;</a></div>
+	</div>
+	<div class="itemDetails">
+		<h3>Nejnovější alba v galerii:</h3>
+		<ul class="fotos clanky">
+			<li>
+				<a class="foto" href="/album/uneticke-posviceni-a-treti-narozeniny-nemeho-medveda/" style="background-image: url('/foto/64/dfe7daf293f0fdefa32e3077e1bd81t.jpg');"></a>
+				<span class="label">
+					<a href="/album/uneticke-posviceni-a-treti-narozeniny-nemeho-medveda/">Únětické posvícení a třetí narozeniny Němého Medvěda</a><br />
+				<em>30 fotek, 20. srpna 2015</em>
+				</span>
+			</li>
+			<li>
+				<a class="foto" href="/album/horni-bavorsko-podruhe/" style="background-image: url('/foto/85/2b0bf826eafc943f068a2502b13476t.jpg');"></a>
+				<span class="label">
+					<a href="/album/horni-bavorsko-podruhe/">Horní Bavorsko podruhé</a><br />
+				<em>44 fotek, 8. července 2015</em>
+				</span>
+			</li>
+			<li>
+				<a class="foto" href="/album/horni-bavorsko-mnichov-a-pivovary-v-okoli-garmisch-partenkirchenu/" style="background-image: url('/foto/74/6ed0d2a7448114b6fae8234efe23b8t.jpg');"></a>
+				<span class="label">
+					<a href="/album/horni-bavorsko-mnichov-a-pivovary-v-okoli-garmisch-partenkirchenu/">Horní Bavorsko - Mnichov a pivovary v okolí Garmisch-Partenkirchenu</a><br />
+				<em>59 fotek, 25. června 2015</em>
+				</span>
+			</li>
+		</ul>
+		<div class="theEnd"></div>
+		<div class="overview"><a href="/seznam/galerie/dle-data/">Další nová alba &raquo;</a></div>
+	</div>
+	<div class="itemDetails">
+		<h3>Kalendář akcí:</h3>
+		<div class="calendar">
+			<h4>září 2015</h4>
+			
+			
+				<ul>
+				<li>
+					7.
+				</li>
+				
+				
+				<li>
+					8.
+				</li>
+				
+				
+				<li>
+					9.
+				</li>
+				
+				
+				<li>
+					10.
+				</li>
+				
+				
+				<li>
+					11.
+				</li>
+				
+				
+				<li>
+					12.
+				</li>
+				
+				
+				<li>
+					13.
+				</li>
+				</ul>
+				<ul>
+				<li>
+					14.
+				</li>
+				
+				
+				<li>
+					15.
+				</li>
+				
+				
+				<li>
+					16.
+				</li>
+				
+				
+				<li>
+					17.
+				</li>
+				
+				
+				<li>
+					18.
+				</li>
+				
+				
+				<li class="full">
+					19.
+						<div class="schedule">
+							
+							<a href="/akce/slunce-ve-skle-2015/">Slunce ve skle 2015</a>
+						</div>
+				</li>
+				
+				
+				<li>
+					20.
+				</li>
+				</ul>
+				<ul>
+				<li>
+					21.
+				</li>
+				
+				
+				<li>
+					22.
+				</li>
+				
+				
+				<li>
+					23.
+				</li>
+				
+				
+				<li>
+					24.
+				</li>
+				
+				
+				<li>
+					25.
+				</li>
+				
+				
+				<li>
+					26.
+				</li>
+				
+				
+				<li>
+					27.
+				</li>
+				</ul>
+				<ul>
+				<li>
+					28.
+				</li>
+				
+				
+				<li>
+					29.
+				</li>
+				
+				
+				<li>
+					30.
+				</li>
+				
+			</ul>
+			<h4>říjen 2015</h4>
+			<ul>
+			<li class="blank"></li><li class="blank"></li><li class="blank"></li>
+				
+				<li>
+					1.
+				</li>
+				
+				
+				<li>
+					2.
+				</li>
+				
+				
+				<li>
+					3.
+				</li>
+				
+				
+				<li>
+					4.
+				</li>
+				</ul>
+				<ul>
+				<li>
+					5.
+				</li>
+				
+				
+				<li>
+					6.
+				</li>
+				
+				
+				<li>
+					7.
+				</li>
+				
+				
+				<li>
+					8.
+				</li>
+				
+				
+				<li>
+					9.
+				</li>
+				
+				
+				<li>
+					10.
+				</li>
+				
+				
+				<li>
+					11.
+				</li>
+				</ul>
+			
+		<div class="overview">
+			<a href="/seznam/akce/">Seznam všech akcí &raquo;</a>
+		</div>
+		</div>
+	</div>
+	<div class="itemDetails">
+		<script type="text/javascript">document.write = function(str){
+			if(str.indexOf("PDS_Poll") > 0 || str.indexOf("PD_superContainer") > 0){
+				document.getElementById("poll-place").innerHTML += str;
+			}
+			else{
+				str = str.replace(/ - Pivn.{1,6}cz/gi, "");
+				document.getElementById("comments-place").innerHTML += str;
+			}
+		};</script>
+		<h3>Anketa:</h3>
+		<div id="poll-place"></div>
+		<script type="text/javascript" charset="utf-8" src="http://static.polldaddy.com/p/6531815.js" async=""></script>
+		<noscript><a href="http://polldaddy.com/poll/6531815/">Přejít na anektu</a></noscript>
+	</div>
+	<div class="itemDetails">
+		<h3>Poslední komentáře:</h3>
+		<div id="comments-place"></div><script type="text/javascript">
+				
+			
+			var disqus_shortname = "pivnici";
+			var dsq = document.createElement("script");
+			dsq.type = "text/javascript";
+			dsq.async = true;
+				dsq.src = "http://" + disqus_shortname + ".disqus.com/recent_comments_widget.js?num_items=5&hide_avatars=0&avatar_size=24&excerpt_length=200";
+				document.getElementsByTagName("HEAD")[0].appendChild(dsq);
+			</script>
+		<div class="overview"><a href="/posledni-komentare/">Více komentářů &raquo;</a></div>
+	</div>
+	<div class="itemDetails">
+		<div><a class="twitter-timeline" href="https://twitter.com/pivnici" data-widget-id="635936632064077824" data-tweet-limit="3" data-height="300" data-chrome="transparent noborders">Tweets by @pivnici</a>
+<script>!function(d,s,id){ var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){ js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs); } }(document,"script","twitter-wjs");</script></div>
+	</div>
+		<div id="textEnd"></div>
+	</div>	
+	</div>
+	
+	<div id="header">
+<div id="menu">
+	<div class="mainLine">
+	<span class="h2">
+		<a href="/">Pivníci.cz</a>
+	</span>
+	<span class="item">
+		
+		<a class="c" href="/">Články</a>
+		<span class="line">
+		
+			<a href="/">Nové články</a>
+
+			<a href="/seznam/clanky/">Všechny články</a>
+
+			<a href="/seznam/galerie/dle-data/">Fotogalerie</a>
+
+			<a href="/clanky/doporucujeme/">Doporučené články</a>
+
+			<a href="/clanky-dle-temat/">Články dle témat</a>
+
+			<a href="/seznam/clanky/dle-autora/">Články dle autora</a>
+
+			<a href="/clanek/o-webu/">O nás</a>
+		</span>
+	</span>
+	<span class="item">
+		
+		<a class="c" href="/seznam/piva/dle-data/">Piva</a>
+		<span class="line">
+		
+			<a href="/seznam/piva/dle-data/">Poslední zveřejněná</a>
+
+			<a href="/hledat/piva/dle-data/?hledat%5Btext%5D=N%C4%9Bm%C3%BD+medv%C4%9Bd">Hledat piva</a>
+
+			<a href="/seznam/piva/">Nejlepší piva</a>
+
+			<a href="/piva-pivovaru/zeme/ceska-republika/">Nejlepší česká piva</a>
+
+			<a href="/seznam/piva/dle-alkoholu/">Dle alkoholu</a>
+
+			<a href="/seznam/piva/dle-horkosti/">Dle hořkosti</a>
+		</span>
+	</span>
+	<span class="item">
+		
+		<a class="c" href="/pivni-styly/">Souhrny piv</a>
+		<span class="line">
+		
+			<a href="/pivni-styly/">Pivní styly</a>
+
+			<a href="/piva-pivovaru/">Země původu a pivovary</a>
+
+			<a href="/piva-hospod/">Místa ochutnání</a>
+
+			<a href="/piva-dle-chmele/">Chmely</a>
+
+			<a href="/piva-dle-obdobi/">Dle dostupnosti</a>
+
+			<a href="/piva-sladku/">Sládci</a>
+
+			<a href="/piva-autoru/">Autoři receptů</a>
+		</span>
+	</span>
+	<span class="item">
+		
+		<a class="c" href="/seznam/hospody/dle-data/">Hospody</a>
+		<span class="line">
+		
+			<a href="/seznam/hospody/dle-data/">Poslední zveřejněné</a>
+
+			<a href="/seznam/hospody/">Nejlepší</a>
+
+			<a href="/hospody/zeme/ceska-republika/">Nejlepší v ČR</a>
+
+			<a href="/hledat/hospody/dle-data/?hledat%5Btext%5D=N%C4%9Bm%C3%BD+medv%C4%9Bd">Hledat hospody</a>
+
+			<a href="/hospody/">Dle země a města</a>
+
+			<a href="/na-cepu/praha/strucne/">Aktuálně v Praze na čepu</a>
+
+			<a href="/seznam/hospody/dle-abecedy/">Dle abecedy</a>
+		</span>
+	</span>
+	<span class="item">
+		
+		<a class="c" href="/mapa-ceskych-pivovaru-a-minipivovaru/">Mapy</a>
+		<span class="line">
+		
+			<a href="/mapa-ceskych-pivovaru-a-minipivovaru/">Mapa českých pivovarů</a>
+
+			<a href="/mapa-piva-dle-zemi/">Piva dle země původu - mapa</a>
+
+			<a href="/aktivni-pivovary/zeme/ceska-republika/dle-data-zalozeni/">Seznam českých pivovarů</a>
+		</span>
+	</span>
+	<span class="item">
+		
+		<a class="c" href="/seznam/cidery/dle-data/">Cidery</a>
+		<span class="line">
+		
+			<a href="/seznam/cidery/dle-data/">Poslední zveřejněné</a>
+
+			<a href="/seznam/cidery/">Nejlepší cidery</a>
+
+			<a href="/cidery-dle-vyrobcu/">Dle země původu a výrobce</a>
+
+			<a href="/cidery-vyrobcu/zeme/ceska-republika/">Nejlepší české cidery</a>
+
+			<a href="/hledat/cidery/dle-data/?hledat%5Btext%5D=N%C4%9Bm%C3%BD+medv%C4%9Bd">Hledat cidery</a>
+
+			<a href="/seznam/cidery/dle-alkoholu/">Dle alkoholu</a>
+
+			<a href="/seznam/cidery/dle-abecedy/">Dle abecedy</a>
+		</span>
+	</span>
+	<span class="item">
+		
+		<a class="c" href="/seznam/akce/">Další</a>
+		<span class="line">
+		
+			<a href="/seznam/akce/">Kalendář pivních akcí</a>
+
+			<a href="/seznam/recepty/">Pivní recepty</a>
+
+			<a href="/posledni-komentare/">Poslední komentáře na webu</a>
+
+			<a href="/anketa/">Aktuální anketa</a>
+		</span>
+	</span>
+	<span class="item">
+		
+		<a class="c" href="/stranka/o-webu/">O nás</a>
+		<span class="line">
+		
+			<a href="/stranka/o-webu/">O webu</a>
+		</span>
+	</span>
+	</div>
+</div>
+<script type="text/javascript" src="/js/menu.js?v=1.01"></script>	</div>
+	
+	<div id="footer">
+		<span id="copyright">
+			&copy; 2011-2015
+			<a href="/clanek/o-webu/">Marley &amp; Bludice</a>,
+			<span class="reach">pivnici (uzenáč) pivnici (tečka) cz</span>
+		</span>
+			 <a href="/prihlaseni/">&raquo;</a>
+	</div>
+</div>
+</body>
+</html>

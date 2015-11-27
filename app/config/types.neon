@@ -1,0 +1,10 @@
+types:
+	Restaurace: "\\s*?Rest[^-\\s]*\\s*"
+	Bar: "\\s*?Bar[^-\\s]*\\s*"
+	Klub: "\\s*?[CK]lub\\s*"
+	Pizzerie: "\\s*?Piz[^-\\s]*\\s*"
+	Hospoda: "\\s*?Hosp[^-\\s]*\\s*"
+	Vinárna: "\\s*?Vin[^-\\s]*\\s*"
+	Pivnice: "\\s*?Pivni[^-\\s]*\\s*"
+	Bufet: "\\s*?Buf[^-\\s]*\\s*"
+	Kavárna: "\\s*?(Kavár|Kaf|Caf)[^-\\s]*\\s*"
