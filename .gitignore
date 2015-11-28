@@ -1,3 +1,4 @@
-app/config/config.local.neon
+config.local.neon
 upload.bat
+composer.lock
 www/images/pubs/*

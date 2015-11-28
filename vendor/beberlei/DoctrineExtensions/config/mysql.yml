@@ -5,9 +5,11 @@ doctrine:
                  date: DoctrineExtensions\Query\Mysql\Date
                  date_format: DoctrineExtensions\Query\Mysql\DateFormat
                  dateadd: DoctrineExtensions\Query\Mysql\DateAdd
+                 datesub: DoctrineExtensions\Query\Mysql\DateSub
                  datediff: DoctrineExtensions\Query\Mysql\DateDiff
                  day: DoctrineExtensions\Query\Mysql\Day
                  dayname: DoctrineExtensions\Query\Mysql\DayName
+                 from_unixtime: DoctrineExtensions\Query\Mysql\FromUnixtime
                  last_day: DoctrineExtensions\Query\Mysql\LastDay
                  minute: DoctrineExtensions\Query\Mysql\Minute
                  second: DoctrineExtensions\Query\Mysql\Second
@@ -24,8 +26,10 @@ doctrine:
                  asin: DoctrineExtensions\Query\Mysql\Asin
                  atan2: DoctrineExtensions\Query\Mysql\Atan2
                  atan: DoctrineExtensions\Query\Mysql\Atan
+                 ceil: DoctrineExtensions\Query\Mysql\Ceil
                  cos: DoctrineExtensions\Query\Mysql\Cos
                  cot: DoctrineExtensions\Query\Mysql\Cot
+                 floor: DoctrineExtensions\Query\Mysql\Floor
                  hour: DoctrineExtensions\Query\Mysql\Hour
                  pi: DoctrineExtensions\Query\Mysql\Pi
                  power: DoctrineExtensions\Query\Mysql\Power
@@ -37,6 +41,7 @@ doctrine:
                  tan: DoctrineExtensions\Query\Mysql\Tan
 
              string_functions:
+                 ascii: DoctrineExtensions\Query\Mysql\Ascii
                  binary: DoctrineExtensions\Query\Mysql\Binary
                  char_length: DoctrineExtensions\Query\Mysql\CharLength
                  concat_ws: DoctrineExtensions\Query\Mysql\ConcatWs
@@ -48,6 +53,7 @@ doctrine:
                  group_concat: DoctrineExtensions\Query\Mysql\GroupConcat
                  ifelse: DoctrineExtensions\Query\Mysql\IfElse
                  ifnull: DoctrineExtensions\Query\Mysql\IfNull
+                 least: DoctrineExtensions\Query\Mysql\Least
                  match_against: DoctrineExtensions\Query\Mysql\MatchAgainst
                  md5: DoctrineExtensions\Query\Mysql\Md5
                  month: DoctrineExtensions\Query\Mysql\Month
@@ -59,4 +65,5 @@ doctrine:
                  sha1: DoctrineExtensions\Query\Mysql\Sha1
                  sha2: DoctrineExtensions\Query\Mysql\Sha2
                  soundex: DoctrineExtensions\Query\Mysql\Soundex
+                 substring_index: DoctrineExtensions\Query\Mysql\SubstringIndex
                  uuid_short: DoctrineExtensions\Query\Mysql\UuidShort

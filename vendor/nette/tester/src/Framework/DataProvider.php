@@ -2,7 +2,7 @@
 
 /**
  * This file is part of the Nette Tester.
- * Copyright (c) 2009 David Grudl (http://davidgrudl.com)
+ * Copyright (c) 2009 David Grudl (https://davidgrudl.com)
  */
 
 namespace Tester;
@@ -20,7 +20,7 @@ class DataProvider
 			throw new \Exception("Missing data-provider file '$file'.");
 		}
 
-		$data = @parse_ini_file($file, TRUE);
+		$data = @parse_ini_file($file, TRUE); // @ is escalated to exception
 		if ($data === FALSE) {
 			throw new \Exception("Cannot parse data-provider file '$file'.");
 		}

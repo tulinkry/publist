@@ -55,9 +55,6 @@ abstract class GpsPicker extends BaseControl
 	const DEFAULT_TYPE = self::TYPE_ROADMAP;
 	const DEFAULT_USE_GOOGLE = TRUE;
 
-	/** string */
-	const HELPER_DIV_ID = 'gpspicker-map-details';
-
 	/** @var string|NULL */
 	protected $search;
 
@@ -105,11 +102,6 @@ abstract class GpsPicker extends BaseControl
 	 * @var bool
 	 */
 	private $manualInput = FALSE;
-
-	/**
-	 * Display selected values in helper area
-	 */
-	private $helpers = TRUE;
 
 	/** @var Html */
 	private $searchControlPrototype;
@@ -202,9 +194,6 @@ abstract class GpsPicker extends BaseControl
 		if (isset($options['manualInput'])) {
 			$this->manualInput = (bool) $options['manualInput'];
 		}
-		if (isset($options['helpers'])) {
-			$this->helpers = (bool)$options['helpers'];
-		}
 	}
 
 
@@ -224,7 +213,7 @@ abstract class GpsPicker extends BaseControl
 	public function getControl($onlyContainer = FALSE)
 	{
 		$control = parent::getControl();
-		$container = Html::el('div' );
+		$container = Html::el('div');
 		$container->id = $control->id;
 
 		if (!$onlyContainer) {
@@ -235,10 +224,6 @@ abstract class GpsPicker extends BaseControl
 			foreach ($this->getParts() as $part => $options) {
 				$container->add((string) $this->getPartialControl($part));
 			}
-
-			$details = Html::el('div', [ "id" => self::HELPER_DIV_ID ] );
-			$container->add( $details );
-
 		}
 
 		$attrs = array(
@@ -252,15 +237,10 @@ abstract class GpsPicker extends BaseControl
 			'search' => $this->showSearch,
 			'shape' => $this->getShape(),
 			'disabled' => $this->isDisabled(),
-			'helpers' => $this->helpers,
 		);
 
 		if ($this->manualInput) {
 			$attrs['manualInput'] = $this->manualInput;
-		}
-
-		if ($this->helpers) {
-			$attrs['helperId'] = self::HELPER_DIV_ID;
 		}
 
 		$container->data('nette-gpspicker', $this->prepareDataAttributes($attrs));
@@ -288,7 +268,7 @@ abstract class GpsPicker extends BaseControl
 		$control = clone parent::getControl();
 		$control->id = "{$control->id}-$name";
 		$control->name = $control->name . "[$name]";
-		$control->type = array_key_exists ( 'type', $options ) ? $options [ 'type' ] : 'number';
+		$control->type = 'number';
 		$control->class[] = "gpspicker-$name";
 		$control->value = $value->$name;
 		$control->data('nette-rules', $this->prepareDataAttributes(array_values(array_filter($rules, function ($rule) use ($options) {
@@ -520,17 +500,7 @@ abstract class GpsPicker extends BaseControl
 		return $this;
 	}
 
-	/**
-	 * Disables helper area
-	 *
-	 * @return GpsPicker provides a fluent interface
-	 */
-	public function disableHelpers()
-	{
-		$this->helpers = FALSE;
 
-		return $this;
-	}
 
 /* === Interface ============================================================ */
 

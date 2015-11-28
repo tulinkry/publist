@@ -323,7 +323,7 @@ return array(
     'Nette\\Utils\\UnknownImageFileException' => $vendorDir . '/nette/utils/src/Utils/Image.php',
     'Nette\\Utils\\Validators' => $vendorDir . '/nette/utils/src/Utils/Validators.php',
     'Tester\\Assert' => $vendorDir . '/nette/tester/src/Framework/Assert.php',
-    'Tester\\AssertException' => $vendorDir . '/nette/tester/src/Framework/Assert.php',
+    'Tester\\AssertException' => $vendorDir . '/nette/tester/src/Framework/AssertException.php',
     'Tester\\CodeCoverage\\Collector' => $vendorDir . '/nette/tester/src/CodeCoverage/Collector.php',
     'Tester\\CodeCoverage\\Generators\\AbstractGenerator' => $vendorDir . '/nette/tester/src/CodeCoverage/Generators/AbstractGenerator.php',
     'Tester\\CodeCoverage\\Generators\\AcceptIterator' => $vendorDir . '/nette/tester/src/CodeCoverage/Generators/AbstractGenerator.php',

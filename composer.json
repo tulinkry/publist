@@ -42,11 +42,12 @@
 		"latte/latte": "~2.2.0",
 		"tracy/tracy": "~2.2.0",
 		"dg/adminer-custom": "~1.6",
-	    "kdyby/doctrine": "@dev",
-	    "kdyby/annotations": "@dev",
-	    "kdyby/doctrine-cache": "@dev",
+	    "kdyby/doctrine": "~2.1",
+	    "kdyby/annotations": "~2.1",
+	    "kdyby/doctrine-cache": "~2.2",
 	    "vojtech-dobes/nette-forms-gpspicker": "~1.2.0",
-		"beberlei/DoctrineExtensions": "^1.0"
+		"beberlei/DoctrineExtensions": "^1.0",
+		"olicek/google-map-api": "dev-master"
 	},
 	"require-dev": {
 		"nette/tester": "~1.3"

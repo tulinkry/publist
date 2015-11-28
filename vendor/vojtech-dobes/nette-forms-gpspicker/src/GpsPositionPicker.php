@@ -17,9 +17,6 @@ class GpsPositionPicker extends GpsPicker
 
 	const DEFAULT_LAT = 50.083;
 	const DEFAULT_LNG = 14.423;
-	const DEFAULT_ADDRESS = "28. října 763/6, Můstek, 110 00 Praha-Praha 1, Česká republika";
-	const DEFAULT_LOCATION = "Praha 1, Česká republika";
-	
 
 	/** @var float */
 	private $lat;
@@ -27,11 +24,7 @@ class GpsPositionPicker extends GpsPicker
 	/** @var float */
 	private $lng;
 
-	/** @var string */
-	private $address;
 
-	/** @var string */
-	private $location;
 
 	protected function getSupportedDrivers()
 	{
@@ -68,16 +61,6 @@ class GpsPositionPicker extends GpsPicker
 				'attrs' => array(
 					'step' => 'any',
 				),
-			),			
-			'address' => array(
-				'label' => 'Address',
-				'rules' => array(Form::FILLED),
-				'type' => 'string'
-			),
-			'location' => array(
-				'label' => 'Location',
-				'rules' => array(Form::FILLED),
-				'type' => 'string'
 			),
 		);
 	}
@@ -89,8 +72,6 @@ class GpsPositionPicker extends GpsPicker
 		parent::loadHttpData();
 		$this->lat = $this->getHttpData(Form::DATA_LINE, '[lat]');
 		$this->lng = $this->getHttpData(Form::DATA_LINE, '[lng]');
-		$this->address = $this->getHttpData(Form::DATA_LINE, '[address]');
-		$this->location = $this->getHttpData(Form::DATA_LINE, '[location]');
 	}
 
 
@@ -102,7 +83,7 @@ class GpsPositionPicker extends GpsPicker
 	 */
 	public function getValue()
 	{
-		return new GpsPoint($this->lat, $this->lng, $this->location, $this->address);
+		return new GpsPoint($this->lat, $this->lng, $this->search);
 	}
 
 
@@ -112,23 +93,17 @@ class GpsPositionPicker extends GpsPicker
 		if ($coordinates === NULL) {
 			$this->lat = self::DEFAULT_LAT;
 			$this->lng = self::DEFAULT_LNG;
-			$this->address = self::DEFAULT_ADDRESS;
-			$this->location = self::DEFAULT_LOCATION;
 			$this->search = NULL;
 		} elseif ($coordinates instanceof GpsPoint || $coordinates instanceof \stdClass) {
 			$this->lat = $coordinates->lat;
 			$this->lng = $coordinates->lng;
-			$this->address = $coordinates->address;
-			$this->location = $coordinates->location;
 			$this->search = isset($coordinates->address) ? $coordinates->address : NULL;
 		} elseif (isset($coordinates['lat'])) {
 			$this->lat = (float) $coordinates['lat'];
 			$this->lng = (float) $coordinates['lng'];
-			$this->address = (string) $coordinates['address'];
-			$this->location = (string) $coordinates['location'];
 			$this->search = isset($coordinates['address']) ? $coordinates['address'] : NULL;
 		} else {
-			list($this->lat, $this->lng, $this->location, $this->address) = $coordinates;
+			list($this->lat, $this->lng) = $coordinates;
 			$this->search = isset($coordinates[2]) ? $coordinates[2] : NULL;
 		}
 

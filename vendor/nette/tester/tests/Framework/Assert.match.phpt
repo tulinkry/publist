@@ -32,6 +32,7 @@ $matches = array(
 	array('%h%', 'aBcDeF'),
 	array('%ds%%ds%', '\\/'),
 	array('%[a-c]+%', 'abc'),
+	array('%[]%', '%[]%'),
 	array('.\\+*?[^]$(){}=!<>|:-#', '.\\+*?[^]$(){}=!<>|:-#'),
 );
 
@@ -61,14 +62,22 @@ foreach ($matches as $case) {
 
 foreach ($notMatches as $case) {
 	list($expected, $value) = $case;
-	Assert::exception(function() use ($expected, $value) {
+	Assert::exception(function () use ($expected, $value) {
 		Assert::match($expected, $value);
-	}, 'Tester\AssertException', "%A% should match %A%");
+	}, 'Tester\AssertException', '%A% should match %A%');
 }
 
-Assert::exception(function() {
+Assert::exception(function () {
 	Assert::match(NULL, '');
 }, 'Exception', 'Pattern must be a string.');
 
 
 Assert::matchFile(__DIR__ . '/Assert.matchFile.txt', '! Hello !');
+
+Assert::exception(function () {
+	Assert::match('a', 'b', 'Custom description');
+}, 'Tester\AssertException', 'Custom description: %A% should match %A%');
+
+Assert::exception(function () {
+	Assert::matchFile(__DIR__ . '/Assert.matchFile.txt', '! Not match !', 'Custom description');
+}, 'Tester\AssertException', 'Custom description: %A% should match %A%');

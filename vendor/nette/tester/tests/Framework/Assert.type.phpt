@@ -13,7 +13,7 @@ $cases = array(
 	array('int', new stdClass, 'object should be int'),
 	array('array', array()),
 	array('bool', TRUE),
-	array('callable', function() {}),
+	array('callable', function () {}),
 	array('float', 0.0),
 	array('int', 0),
 	array('integer', 0),
@@ -31,7 +31,7 @@ $cases = array(
 foreach ($cases as $case) {
 	@list($type, $value, $message) = $case;
 	if ($message) {
-		Assert::exception(function() use ($type, $value) {
+		Assert::exception(function () use ($type, $value) {
 			Assert::type($type, $value);
 		}, 'Tester\AssertException', $message);
 	} else {
@@ -43,3 +43,7 @@ foreach ($cases as $case) {
 $arr = array();
 $arr[] = & $arr;
 Assert::type('list', $arr);
+
+Assert::exception(function () {
+	Assert::type('int', 'string', 'Custom description');
+}, 'Tester\AssertException', 'Custom description: string should be int');

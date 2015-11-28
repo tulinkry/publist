@@ -2,7 +2,7 @@
 
 /**
  * Nette Tester.
- * Copyright (c) 2009 David Grudl (http://davidgrudl.com)
+ * Copyright (c) 2009 David Grudl (https://davidgrudl.com)
  */
 
 require __DIR__ . '/Runner/PhpInterpreter.php';
@@ -21,6 +21,7 @@ require __DIR__ . '/Runner/Output/JUnitPrinter.php';
 require __DIR__ . '/Framework/Helpers.php';
 require __DIR__ . '/Framework/Environment.php';
 require __DIR__ . '/Framework/Assert.php';
+require __DIR__ . '/Framework/AssertException.php';
 require __DIR__ . '/Framework/Dumper.php';
 require __DIR__ . '/Framework/DataProvider.php';
 require __DIR__ . '/Framework/TestCase.php';

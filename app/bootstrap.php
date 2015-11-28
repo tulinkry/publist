@@ -12,7 +12,6 @@ $configurator->setTempDirectory(__DIR__ . '/../temp');
 $configurator->createRobotLoader()
 	->addDirectory(__DIR__)
 	->addDirectory(__DIR__ . '/../vendor/tulinkry' )
-	->addDirectory(__DIR__ . '/../vendor/olicek' )
 	->register();
 
 

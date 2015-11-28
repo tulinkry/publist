@@ -22,8 +22,6 @@ class GpsPoint extends Nette\Object
 	/** @var string|NULL */
 	private $address;
 
-	/** @var string|NULL */
-	private $location;
 
 
 	/**
@@ -31,7 +29,7 @@ class GpsPoint extends Nette\Object
 	 * @param  float|NULL
 	 * @param  string|NULL
 	 */
-	public function __construct($lat, $lng = NULL, $location = NULL, $address = NULL)
+	public function __construct($lat, $lng = NULL, $address = NULL)
 	{
 		if (is_array($lat)) {
 			$address = $lng;
@@ -41,7 +39,6 @@ class GpsPoint extends Nette\Object
 		$this->lat = (float) $lat;
 		$this->lng = (float) $lng;
 		$this->address = ((string) $address) ?: NULL;
-		$this->location = ((string) $location) ?: NULL;
 	}
 
 
@@ -80,15 +77,6 @@ class GpsPoint extends Nette\Object
 		return $this->address;
 	}
 
-	/**
-	 * Returns location
-	 *
-	 * @return string|NULL
-	 */
-	public function getLocation()
-	{
-		return $this->location;
-	}
 
 
 	/**

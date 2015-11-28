@@ -26,7 +26,7 @@ foreach ($same as $case) {
 
 	Assert::same($expected, $value);
 
-	Assert::exception(function() use ($expected, $value) {
+	Assert::exception(function () use ($expected, $value) {
 		Assert::notSame($expected, $value);
 	}, 'Tester\AssertException', '%a% should not be %a%');
 }
@@ -36,7 +36,7 @@ foreach ($notSame as $case) {
 
 	Assert::notSame($case[0], $case[1]);
 
-	Assert::exception(function() use ($expected, $value) {
+	Assert::exception(function () use ($expected, $value) {
 		Assert::same($expected, $value);
 	}, 'Tester\AssertException', '%a% should be %a%');
 }
@@ -48,8 +48,16 @@ if ((PHP_VERSION_ID >= 50315 && PHP_VERSION_ID < 50400) || PHP_VERSION_ID >= 504
 	Assert::same($rec, $rec);
 }
 
-Assert::exception(function() {
+Assert::exception(function () {
 	$rec = array();
 	$rec[] = & $rec;
 	Assert::same($rec, array());
 }, 'Tester\AssertException');
+
+Assert::exception(function () {
+	Assert::same(true, false, 'Custom description');
+}, 'Tester\AssertException', 'Custom description: %a% should be %a%');
+
+Assert::exception(function () {
+	Assert::notSame(true, true, 'Custom description');
+}, 'Tester\AssertException', 'Custom description: %a% should not be %a%');
