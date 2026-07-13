@@ -1,0 +1,135 @@
+name: Deploy to hosting
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: prd
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+          MYSQL_DATABASE: publist
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: curl, mbstring, intl, pdo_mysql, gd, bcmath, zip, imap
+          tools: composer:2
+
+      - name: Install dependencies (incl. dev, needed by the test suite)
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader
+
+      - name: Run test suite
+        run: vendor/bin/tester tests/
+
+      - name: Run static analysis
+        run: vendor/bin/phpstan analyse --no-progress
+
+      - name: Load production schema into the smoke-test database
+        run: mysql -h127.0.0.1 -uroot publist < db/schema.sql
+
+      # Throwaway config pointing at this job's own MySQL service container -
+      # only used for the smoke test below, never uploaded. Real production
+      # secrets are generated in a separate step further down, right before
+      # upload, so they never sit on disk during the test/analysis steps.
+      - name: Generate a throwaway config.local.neon for the smoke test
+        env:
+          DB_DSN: "mysql:host=127.0.0.1;port=3306;dbname=publist;charset=utf8mb4"
+          DB_USER: root
+          DB_PASSWORD: ""
+          GOOGLE_MAPS_API_KEY: ""
+          EMAIL_SERVER: "localhost"
+          EMAIL_PORT: 143
+          EMAIL_ARGUMENTS: "novalidate-cert"
+          EMAIL_USER: ""
+          EMAIL_PASSWORD: ""
+        run: php bin/write-config-local.php
+
+      - name: Re-install production dependencies (no dev tools shipped to hosting)
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev
+
+      # See modernize-nette-app skill: this is what actually catches a missing
+      # config.neon service registration before it reaches production, since
+      # the test suite constructs presenters directly and never exercises the
+      # real DI container the way a live HTTP request does.
+      - name: Smoke test - boot the app and request the homepage
+        run: |
+          cat > /tmp/router.php <<'PHP'
+          <?php
+          $docroot = $_SERVER['DOCUMENT_ROOT'];
+          $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+          if ($path !== '/' && file_exists($docroot . $path)) { return false; }
+          require $docroot . '/index.php';
+          PHP
+          php -S 127.0.0.1:8080 -t www /tmp/router.php &
+          SERVER_PID=$!
+          trap "kill $SERVER_PID" EXIT
+          for i in $(seq 1 20); do
+            code=$(curl -s -o /tmp/smoke-response.html -w '%{http_code}' http://127.0.0.1:8080/ || true)
+            [ -n "$code" ] && [ "$code" != "000" ] && break
+            sleep 0.5
+          done
+          if [ "$code" -ge 500 ] || grep -qiE 'fatal error|uncaught|tracy-error' /tmp/smoke-response.html; then
+            cat /tmp/smoke-response.html
+            exit 1
+          fi
+
+      # The smoke test just wrote real cache/session files under temp/ and
+      # log/ - wipe them back to empty (keeping the tracked .gitignore
+      # placeholders) before upload. Two passes: files first, then only
+      # now-empty dirs, since a single `find ... -delete` errors on a dir
+      # that still contains its preserved .gitignore.
+      - name: Reset temp/ and log/ after the smoke test
+        run: |
+          find temp log www/tmp -type f -not -name '.gitignore' -delete
+          find temp log www/tmp -mindepth 1 -type d -empty -delete
+          rm -f app/config/config.local.neon
+
+      # The real production config, generated only now, right before upload -
+      # written directly into the checkout that's about to go over FTP.
+      - name: Generate the real production config.local.neon
+        env:
+          DB_DSN: ${{ secrets.PROD_DB_DSN }}
+          DB_USER: ${{ secrets.PROD_DB_USER }}
+          DB_PASSWORD: ${{ secrets.PROD_DB_PASSWORD }}
+          GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
+          EMAIL_SERVER: ${{ secrets.EMAIL_SERVER }}
+          EMAIL_PORT: ${{ secrets.EMAIL_PORT }}
+          EMAIL_ARGUMENTS: ${{ secrets.EMAIL_ARGUMENTS }}
+          EMAIL_USER: ${{ secrets.EMAIL_USER }}
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+        run: php bin/write-config-local.php
+
+      - name: Deploy over FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftps
+          local-dir: ./
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/tests/**
+            **/.github/**
+            **/db/**
+            **/scratch/**
+            **/*.md

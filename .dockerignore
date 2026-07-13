@@ -1,0 +1,9 @@
+.git
+scratch
+temp/*
+!temp/.gitignore
+log/*
+!log/.gitignore
+www/tmp/*
+flake.nix
+flake.lock

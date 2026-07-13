@@ -1,7 +1,7 @@
 parameters:
 	libsDir: %appDir%/../vendor
-	#assetsDir: %libsDir%/tulinkry/assets
-	assets: %libsDir%/tulinkry/assets
+	#assetsDir: %libsDir%/tulinkry/tulinkry/src/assets
+	assets: %libsDir%/tulinkry/tulinkry/src/assets
 	#assets: %appDir%/tulinkry/assets
 	addons: %assets%/js/addons
 

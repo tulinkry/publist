@@ -1,0 +1,71 @@
+{*
+	Plain, first-party replacement for the former Oli\GoogleAPI server-side
+	map control. Renders a <div> placeholder plus a small vanilla-JS
+	snippet that lazy-loads the Google Maps JavaScript API and draws a map
+	with markers, entirely client-side (no PHP/DI dependency).
+
+	Expected variables:
+		mapId    string  unique DOM id for this map instance
+		center   array   [lat, lng] the map is centered on
+		zoom     int     initial zoom level
+		markers  array   list of ['lat' => float, 'lng' => float, 'title' => ?string,
+		                          'color' => ?string, 'url' => ?string]
+		apiKey   string  Google Maps JavaScript API key
+*}
+<div id="{$mapId}" class="google-map" style="width:100%;height:500px;"></div>
+<script>
+(function () {
+	var mapId = {$mapId};
+	var center = {$center};
+	var zoom = {$zoom};
+	var markers = {$markers};
+	var apiKey = {$apiKey};
+
+	function renderMap() {
+		var el = document.getElementById(mapId);
+		if (!el || !window.google || !window.google.maps) {
+			return;
+		}
+
+		var map = new google.maps.Map(el, {
+			center: { lat: center[0], lng: center[1] },
+			zoom: zoom
+		});
+
+		markers.forEach(function (marker) {
+			var mapMarker = new google.maps.Marker({
+				position: { lat: marker.lat, lng: marker.lng },
+				map: map,
+				title: marker.title || ''
+			});
+
+			if (marker.url) {
+				mapMarker.addListener('click', function () {
+					window.location.href = marker.url;
+				});
+			}
+		});
+	}
+
+	if (window.google && window.google.maps) {
+		renderMap();
+		return;
+	}
+
+	window.__publistMapCallbacks = window.__publistMapCallbacks || [];
+	window.__publistMapCallbacks.push(renderMap);
+
+	if (!window.__publistMapsApiLoading) {
+		window.__publistMapsApiLoading = true;
+		window.__publistMapsApiReady = function () {
+			(window.__publistMapCallbacks || []).forEach(function (cb) { cb(); });
+			window.__publistMapCallbacks = [];
+		};
+
+		var script = document.createElement('script');
+		script.src = 'https://maps.googleapis.com/maps/api/js?key=' + apiKey + '&callback=__publistMapsApiReady';
+		script.async = true;
+		document.head.appendChild(script);
+	}
+})();
+</script>
