@@ -1,0 +1,2 @@
+services:
+	mail.mailer: App\Model\FakeMailer

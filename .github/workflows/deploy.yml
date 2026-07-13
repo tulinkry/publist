@@ -1,0 +1,158 @@
+name: Deploy to hosting
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: prd
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+          MYSQL_DATABASE: publist
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=10
+
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
+        with:
+          php-version: '8.4'
+          extensions: curl, mbstring, intl, pdo_mysql, pdo_sqlite, gd, bcmath, zip, imap
+          tools: composer:2
+          coverage: none
+
+      - name: Install dependencies (incl. dev, needed by the test suite)
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader
+
+      - name: Run test suite
+        run: vendor/bin/tester tests/
+
+      - name: Run static analysis
+        run: vendor/bin/phpstan analyse --no-progress
+
+      - name: Load production schema into the smoke-test database
+        run: mysql -h127.0.0.1 -uroot publist < db/schema.sql
+
+      # Throwaway config pointing at this job's own MySQL service container -
+      # only used for the smoke test below, never uploaded. Real production
+      # secrets are generated in a separate step further down, right before
+      # upload, so they never sit on disk during the test/analysis steps.
+      - name: Generate a throwaway config.local.neon for the smoke test
+        env:
+          DB_DSN: "mysql:host=127.0.0.1;port=3306;dbname=publist;charset=utf8mb4"
+          DB_USER: root
+          DB_PASSWORD: ""
+          GOOGLE_MAPS_API_KEY: ""
+          EMAIL_SERVER: "localhost"
+          EMAIL_PORT: 143
+          EMAIL_ARGUMENTS: "novalidate-cert"
+          EMAIL_USER: ""
+          EMAIL_PASSWORD: ""
+        run: php bin/write-config-local.php
+
+      - name: Re-install production dependencies (no dev tools shipped to hosting)
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev
+
+      # See modernize-nette-app skill: this is what actually catches a missing
+      # config.neon service registration before it reaches production, since
+      # the test suite constructs presenters directly and never exercises the
+      # real DI container the way a live HTTP request does.
+      - name: Smoke test - boot the app and request the homepage
+        run: |
+          cat > /tmp/router.php <<'PHP'
+          <?php
+          $docroot = $_SERVER['DOCUMENT_ROOT'];
+          $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+          if ($path !== '/' && file_exists($docroot . $path)) { return false; }
+          require $docroot . '/index.php';
+          PHP
+          php -S 127.0.0.1:8080 -t www /tmp/router.php &
+          SERVER_PID=$!
+          trap "kill $SERVER_PID" EXIT
+          for i in $(seq 1 20); do
+            code=$(curl -s -o /tmp/smoke-response.html -w '%{http_code}' http://127.0.0.1:8080/ || true)
+            [ -n "$code" ] && [ "$code" != "000" ] && break
+            sleep 0.5
+          done
+          if [ "$code" -ge 500 ] || grep -qiE 'fatal error|uncaught|tracy-error' /tmp/smoke-response.html; then
+            cat /tmp/smoke-response.html
+            exit 1
+          fi
+
+      # The smoke test just wrote real cache/session files under temp/ and
+      # log/ - wipe them back to empty (keeping the tracked .gitignore
+      # placeholders) before upload. Two passes: files first, then only
+      # now-empty dirs, since a single `find ... -delete` errors on a dir
+      # that still contains its preserved .gitignore.
+      - name: Reset temp/ and log/ after the smoke test
+        run: |
+          find temp log www/tmp -type f -not -name '.gitignore' -delete
+          find temp log www/tmp -mindepth 1 -type d -empty -delete
+          rm -f app/config/config.local.neon
+
+      # The real production config, generated only now, right before upload -
+      # written directly into the checkout that's about to go over FTP.
+      - name: Generate the real production config.local.neon
+        env:
+          DB_DSN: ${{ secrets.DB_DSN }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
+          EMAIL_SERVER: ${{ secrets.EMAIL_SERVER }}
+          EMAIL_PORT: ${{ secrets.EMAIL_PORT }}
+          EMAIL_ARGUMENTS: ${{ secrets.EMAIL_ARGUMENTS }}
+          EMAIL_USER: ${{ secrets.EMAIL_USER }}
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+        run: php bin/write-config-local.php
+
+      - name: Install lftp
+        run: sudo apt-get update && sudo apt-get install -y lftp
+
+      # Runs lftp directly instead of a third-party deploy action - no
+      # external Action to trust with production FTP credentials, and lftp's
+      # mirror does its own remote listing + only uploads changed files,
+      # which is what actually fixes the previous action's ~10-minute
+      # timeouts uploading vendor/'s many small files on every single push.
+      - name: Deploy over FTPS
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USER: ${{ secrets.FTP_USER }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+        run: |
+          lftp -u "$FTP_USER","$FTP_PASSWORD" "$FTP_SERVER" <<-'EOF'
+          set net:max-retries 5
+          set net:reconnect-interval-base 5
+          set net:timeout 30
+          set ftp:passive-mode true
+          set ftp:ssl-force true
+          set ftp:ssl-protect-data true
+          set ssl:verify-certificate yes
+          set ssl:check-hostname no
+          mirror --reverse --verbose --parallel=3 \
+            --exclude-glob .git/ \
+            --exclude-glob .gitignore \
+            --exclude-glob .gitattributes \
+            --exclude-glob .github/ \
+            --exclude-glob node_modules/ \
+            --exclude-glob tests/ \
+            --exclude-glob README.md \
+            --exclude-glob CLAUDE.md \
+            --exclude-glob Dockerfile \
+            --exclude-glob docker-compose.yml \
+            --exclude-glob .dockerignore \
+            . /public_html/
+          bye
+          EOF

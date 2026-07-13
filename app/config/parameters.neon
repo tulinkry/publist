@@ -16,4 +16,4 @@ parameters:
 		typeFile: %appDir%/config/types.neon
 	beer:
 		plugins: 
-			- Model\PivniciPlugin
+			- App\Model\PivniciPlugin

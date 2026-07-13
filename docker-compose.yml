@@ -1,0 +1,45 @@
+services:
+  db:
+    image: mysql:8.0
+    platform: linux/arm64
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: publist
+      MYSQL_USER: publist
+      MYSQL_PASSWORD: publist
+    volumes:
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+      - db-data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build:
+      context: .
+      target: runtime
+    platform: linux/arm64
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_DSN: "mysql:host=db;dbname=publist;charset=utf8mb4"
+      DB_USER: publist
+      DB_PASSWORD: publist
+      GOOGLE_MAPS_API_KEY: "${GOOGLE_MAPS_API_KEY}"
+      # No real mail server in this dev/demo stack - the "emails" service
+      # will compile fine but fail if actually used (Admin:Cron/Admin:Email).
+      EMAIL_SERVER: "localhost"
+      EMAIL_PORT: "143"
+      EMAIL_ARGUMENTS: "novalidate-cert"
+      EMAIL_USER: ""
+      EMAIL_PASSWORD: ""
+    ports:
+      - "8080:8080"
+
+volumes:
+  db-data:

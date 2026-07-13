@@ -1,0 +1,118 @@
+diff -ruN a/src/GpsPicker.php b/src/GpsPicker.php
+--- a/src/GpsPicker.php	2026-07-13 16:51:25
++++ b/src/GpsPicker.php	2026-07-13 16:42:41
+@@ -198,7 +198,7 @@
+ 
+ 
+ 
+-	public function loadHttpData()
++	public function loadHttpData(): void
+ 	{
+ 		$this->search = $this->getHttpData(Form::DATA_LINE, '[search]');
+ 	}
+@@ -218,11 +218,11 @@
+ 
+ 		if (!$onlyContainer) {
+ 			if ($this->showSearch) {
+-				$container->add((string) $this->getSearchControlPrototype());
++				$container->addHtml((string) $this->getSearchControlPrototype());
+ 			}
+ 
+ 			foreach ($this->getParts() as $part => $options) {
+-				$container->add((string) $this->getPartialControl($part));
++				$container->addHtml((string) $this->getPartialControl($part));
+ 			}
+ 		}
+ 
+@@ -331,7 +331,7 @@
+ 	private function getExportedRules()
+ 	{
+ 		if (!isset($this->exportedRules)) {
+-			$this->exportedRules = self::exportRules($this->rules);
++			$this->exportedRules = \Nette\Forms\Helpers::exportRules($this->getRules());
+ 		}
+ 		return $this->exportedRules;
+ 	}
+diff -ruN a/src/GpsPickerExtension.php b/src/GpsPickerExtension.php
+--- a/src/GpsPickerExtension.php	2026-07-13 16:51:25
++++ b/src/GpsPickerExtension.php	2026-07-13 16:30:56
+@@ -4,6 +4,7 @@
+ 
+ use Nette\DI;
+ use Nette\PhpGenerator;
++use Nette\Schema;
+ 
+ if (!class_exists('Nette\DI\CompilerExtension')) {
+ 	class_alias('Nette\Config\CompilerExtension', 'Nette\DI\CompilerExtension');
+@@ -21,33 +22,25 @@
+ class GpsPickerExtension extends DI\CompilerExtension
+ {
+ 
+-	/** @var array */
+-	private $defaultConfig = array(
+-		'driver' => GpsPicker::DRIVER_GOOGLE,
+-		'type' => GpsPicker::TYPE_ROADMAP,
+-	);
+-
+-
+-
+-	public function loadConfiguration()
++	public function getConfigSchema(): Schema\Schema
+ 	{
+-		$container = $this->getContainerBuilder();
+-
+-		$latte = $container->getDefinition('nette.latteFactory');
+-		$latte->addSetup('VojtechDobes\NetteForms\GpsPickerMacros::install(?->getCompiler())', array('@self'));
++		return Schema\Expect::structure([
++			'driver' => Schema\Expect::string(GpsPicker::DRIVER_GOOGLE),
++			'type' => Schema\Expect::string(GpsPicker::TYPE_ROADMAP),
++		])->castTo('array');
+ 	}
+ 
+ 
+ 
+ 	public function afterCompile(PhpGenerator\ClassType $class)
+ 	{
+-		$config = $this->getConfig($this->defaultConfig);
++		$config = $this->getConfig();
+ 		$type = strtoupper($config['type']);
+ 		if (in_array($type, GpsPicker::$typeSupport[$config['driver']]) === FALSE) {
+ 			throw new UnsupportedTypeException("Driver '$config[driver]' doesn't support '$type' type.");
+ 		}
+ 
+-		$initialize = $class->methods['initialize'];
++		$initialize = $class->getMethod('initialize');
+ 		$initialize->addBody('VojtechDobes\NetteForms\GpsPositionPicker::register(?, ?);', array(
+ 			$config['driver'],
+ 			$type,
+diff -ruN a/src/GpsPoint.php b/src/GpsPoint.php
+--- a/src/GpsPoint.php	2026-07-13 16:51:25
++++ b/src/GpsPoint.php	2026-07-13 16:32:46
+@@ -9,9 +9,14 @@
+  * Single point
+  *
+  * @author Vojtěch Dobeš
++ * @property-read float $lat
++ * @property-read float $lng
++ * @property-read string|null $address
+  */
+-class GpsPoint extends Nette\Object
++class GpsPoint
+ {
++	use Nette\SmartObject;
++
+ 
+ 	/** @var float */
+ 	private $lat;
+diff -ruN a/src/GpsPositionPicker.php b/src/GpsPositionPicker.php
+--- a/src/GpsPositionPicker.php	2026-07-13 16:51:25
++++ b/src/GpsPositionPicker.php	2026-07-13 16:26:04
+@@ -67,7 +67,7 @@
+ 
+ 
+ 
+-	public function loadHttpData()
++	public function loadHttpData(): void
+ 	{
+ 		parent::loadHttpData();
+ 		$this->lat = $this->getHttpData(Form::DATA_LINE, '[lat]');

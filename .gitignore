@@ -1,4 +1,36 @@
+.php-cs-fixer.dist.php
+
 config.local.neon
 upload.bat
-composer.lock
 www/images/pubs/*
+.env
+
+# Composer-managed packages, reinstallable via `composer install`.
+# tulinkry/tulinkry is a real Composer path-repository dependency now (see
+# ../tulinkry), not hand-vendored, so it's ignored like everything else here.
+/vendor/*
+
+# runtime cache/session/log artifacts - each subdir keeps its own
+# "*\n!.gitignore" placeholder rule, this just catches new/未-covered ones
+/temp/*
+!/temp/.gitignore
+!/temp/cache
+!/temp/sessions
+/log/*
+!/log/.gitignore
+/www/tmp/*
+!/www/tmp/.gitignore
+
+# OS / editor junk
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+
+# Nette Tester writes these next to a test on a failed Assert::equal/same,
+# for diffing - debug byproducts of a test run, not source.
+tests/**/output/*.actual
+tests/**/output/*.expected
+
+/.php-cs-fixer.cache

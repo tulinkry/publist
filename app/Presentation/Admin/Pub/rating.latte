@@ -1,0 +1,142 @@
+{block content}
+
+	{ifset $rating}
+		{var $ratingPub = $rating->ref('pubs', 'pub_id')}
+		{var $ratingUser = $rating->ref('users', 'user_id')}
+	    <div class="row">
+	        <div class="col-lg-12">
+				<h1>Úprava hodnocení</h1>
+	        </div>
+	        <div class="col-lg-12">
+				<h2>{$ratingPub->name} - {$ratingPub->location}</h2>
+				<small>{$ratingPub->address}</small>
+	        </div>
+	        <div class="col-lg-12">
+				<h3>{$ratingUser->name} ({$ratingUser->email})</h3>
+	        </div>
+	    </div>
+
+	    <div class="row"  n:snippet="ratingForm">
+					{var $ratingPub = $rating->ref('pubs', 'pub_id')}
+
+					{form ratingForm}
+						<ul class="errors" n:if="$form->hasErrors()">
+						        <li n:foreach="$form->errors as $error">{$error}</li>
+						</ul>
+
+						<fieldset>
+						<legend>Povinné prvky</legend>
+							<div class="form-group" n:foreach="$form['mandatory']->controls as $name => $ctrl">
+								<div class="col-sm-3 control-label">
+									{label $ctrl /}
+								</div>
+								<div class="col-sm-9">
+									{input $ctrl}
+								</div>
+							</div>
+						</fieldset>
+						<fieldset>
+						<legend>Nepovinné prvky</legend>
+
+							{foreach $form['optional']['beers']->containers as $name => $container}
+								<div class="beer">
+									<h3 class="col-sm-offset-1">Pivo <span class="text"></span></h3>
+									
+									<div class="form-group">
+										<div class="col-sm-3 col-sm-offset-1">
+											{label $container['brand'] /}
+										</div>
+										<div class="col-sm-8">
+											{input $container['brand'] class => 'selectpicker form-control value', 'data-live-search' => 'true'}
+										</div>
+										<div class="clearfix"></div>
+									</div>
+
+									<div class="form-group">
+										<div class="col-sm-3 col-sm-offset-1">
+											{label $container['beerCriteria'] /}
+										</div>
+										<div class="col-sm-8">
+											{input $container['beerCriteria'] class => 'form-control'}
+										</div>
+										<div class="clearfix"></div>
+									</div>
+
+									<div class="form-group">
+										<div class="col-sm-3 col-sm-offset-1">
+											{label $container['price'] /}
+										</div>
+										<div class="col-sm-8">
+											{input $container['price'] class => 'selectpicker form-control', 'data-live-search' => 'true'}
+										</div>
+										<div class="clearfix"></div>
+									</div>
+
+									<div class="form-group">
+										<div class="col-sm-3 col-sm-offset-1">
+											<label>Operace s tímto pivem</label>
+										</div>
+										<div class="col-sm-8">
+											{input $container['deleteBeer']}
+										</div>
+										<div class="clearfix"></div>
+									</div>									
+								</div>
+								{var $gotBeer = true}
+							{/foreach}
+
+
+							<div class="form-group">
+								<div class="col-sm-3">
+									<label>Pivo</label>
+								</div>
+								<div class="col-sm-9">
+									{input $form['optional']['beers']['addBeer'] value => !empty($gotBeer) ? 'Přidat další pivo' : 'Přidat pivo'}
+								</div>
+								<div class="clearfix"></div>
+							</div>
+
+							{foreach $form['optional']->controls as $name => $ctrl}
+								{if ! $ctrl->getOption('rendered')}
+									{$form->getRenderer()->renderPair($ctrl)|noescape}
+								{/if}
+							{/foreach}
+
+
+
+							 {*<div class="form-group" n:foreach="$form['optional']['beers']->containers as $name => $control">
+								<div class="col-sm-3 control-label">
+									{$form->getRenderer()->renderLabel($control)|noescape}
+								</div>
+								<div class="col-sm-9">
+									{$form->getRenderer()->renderPair($control)|noescape}
+								</div>
+							</div>*}
+
+
+						</fieldset>
+						<fieldset>
+							{foreach $form->controls as $name => $ctrl}
+								{if ! $ctrl->getOption('rendered')}
+									{$form->getRenderer()->renderPair($ctrl)|noescape}
+								{/if}
+							{/foreach}
+						</fieldset>
+					{/form}
+
+		</div>
+
+		<a href="{link Pub:detail, id => $ratingPub->pub_id, paginator-page => $paginator->page, paginator2-page => $paginator2->page}" class="btn btn-info">Zpět</a>
+
+	{else}
+		<div class="row">
+			<div class="col-lg-12">
+				<p class="alert alert-danger">Nebyla nalezena požadovaná restaurace</p>
+				<a href="{link Pub:default}" title="Seznam restaurací" class="btn btn-info">Zpět</a>
+			</div>
+		</div>
+	{/ifset}
+
+{/block}
+
+

@@ -12,31 +12,51 @@ parameters:
 		thumbnail_path: images/thumbnails
 	paginator:
 		itemsPerPage: 15
+	# Google Maps JavaScript API key, read client-side only (see
+	# components/googleMap.latte) by App\Presentation\Front\Ladder\LadderPresenter
+	# and App\Presentation\Front\Pub\PubPresenter via $this->parameters->params.
+	# Sourced from the environment, not committed in plain text here.
+	googleMapsApiKey: %env.GOOGLE_MAPS_API_KEY%
 
 php:
 	date.timezone: Europe/Prague
 	session.save_path: "%tempDir%/sessions"
 
+# www/.htaccess does the actual http->https redirect; this just makes Nette
+# treat the (now-https) request as secure so links/cookies match reality -
+# same pattern as the sibling dutymanager project.
+http:
+	forceHttps: true
 
-nette:
-	application:
-	#	errorPresenter: Front:Error
-		mapping:
-			*: *Module\Presenters\*Presenter
-	session:
-		autoStart: smart
-		expiration: 14 days
-	debugger:
-		email: k.tulinger@seznam.cz
+
+database:
+	dsn: %env.DB_DSN%
+	user: %env.DB_USER%
+	password: %env.DB_PASSWORD%
+
+
+# Nette 3 uses flat top-level extension names (was nested under "nette:" in 2.x)
+application:
+#	errorPresenter: Front:Error
+	# No explicit mapping needed - App\Presentation\*\**Presenter is Nette's
+	# own built-in default (PresenterFactory::DEFAULT_MAPPING), and this
+	# app's presenter layout matches it exactly.
+
+session:
+	autoStart: smart
+	expiration: 14 days
+
+tracy:
+	email: k.tulinger@seznam.cz
 
 services:
-	- Router\RouterFactory
-	router: @Router\RouterFactory::createRouter
+	- App\Core\RouterFactory
+	router: @App\Core\RouterFactory::createRouter
 	parameterService: Tulinkry\Services\ParameterService
 
-	authenticator: Authenticator\Authenticator()
+	authenticator: App\Core\Authenticator()
 
-	authorizatorFactory: Authorizator\authorizatorFactory()
+	authorizatorFactory: App\Core\AuthorizatorFactory()
 	authorizator: @authorizatorFactory::createAuthorizator
 
 	cssControl: Tulinkry\Components\ICssLoader
@@ -46,23 +66,24 @@ services:
 	#	class: Tulinkry\Components\MenuControl(%array%,...)
 	#	parameters: [array]
 
-	emails: Model\EmailModel( %email_server%, %email_port%, %email_arguments%, %email_user%, %email_password% )
+	emails: App\Model\EmailModel( %env.EMAIL_SERVER%, %env.EMAIL_PORT%, %env.EMAIL_ARGUMENTS%, %env.EMAIL_USER%, %env.EMAIL_PASSWORD% )
 
-	pubs: Model\PubModel()
-	ratings: Model\RatingModel()
-	users: Model\UserModel()
-	beers: Model\BeerModel()
-	descriptions: Model\DescriptionModel()
-	beerlinks: Model\BeerLinksModel()
+	pubs: App\Model\PubModel()
+	ratings: App\Model\RatingModel()
+	users: App\Model\UserModel()
+	beers: App\Model\BeerModel()
+	descriptions: App\Model\DescriptionModel()
+	beerlinks: App\Model\BeerLinksModel()
+	beerRatings: App\Model\BeerRatingModel()
 
 
 extensions:
-	console: Kdyby\Console\DI\ConsoleExtension
-	events: Kdyby\Events\DI\EventsExtension
-	annotations: Kdyby\Annotations\DI\AnnotationsExtension
-	doctrine: Kdyby\Doctrine\DI\OrmExtension
 	gpspicker: VojtechDobes\NetteForms\GpsPickerExtension
-	map: Oli\GoogleAPI\MapApiExtension
-	
-map:
-    key: "AIzaSyCBNGn9ADxqF-jlhzkzq1c0P3cBu_XdM0s"
+
+# Google Maps is now a purely client-side concern (see components/googleMap.latte
+# and the front-end JS that calls the Maps JavaScript API directly) - the former
+# Oli\GoogleAPI\MapApiExtension DI extension (olicek/google-map-api, an abandoned
+# dev-master 2015 package whose vendor/ copy was already an empty placeholder) has
+# been removed along with the composer dependency, so it no longer needs to be
+# registered here. The Maps API key itself is now the "googleMapsApiKey"
+# parameter above (env.GOOGLE_MAPS_API_KEY), not a DI extension.

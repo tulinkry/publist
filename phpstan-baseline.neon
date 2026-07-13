@@ -1,0 +1,61 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Access to an undefined property Nette\\ComponentModel\\IComponent\:\:\$page\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Forms/Admin/RatingForm.php
+
+		-
+			message: '#^Call to an undefined method Nette\\ComponentModel\\IComponent\:\:setDefaultValue\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Forms/Front/DescriptionForm.php
+
+		-
+			message: '#^Call to an undefined method App\\Forms\\Front\\PubForm\:\:addGpsPicker\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Forms/Front/PubForm.php
+
+		-
+			message: '#^Call to an undefined method Nette\\ComponentModel\\IComponent\:\:setDefaultValue\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: app/Forms/Front/RatingForm.php
+
+		-
+			message: '#^Call to an undefined method Nette\\ComponentModel\\IComponent\:\:setDefaults\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: app/Forms/Front/RatingForm.php
+
+		-
+			message: '#^Call to an undefined method Tulinkry\\Forms\\Container\:\:addDynamic\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Forms/Front/RatingForm.php
+
+		-
+			message: '#^Access to an undefined property Nette\\Forms\\FormRenderer\:\:\$wrappers\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Forms/Front/SearchForm.php
+
+		-
+			message: '#^Call to an undefined method Nette\\ComponentModel\\IComponent\:\:setDefaultValue\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: app/Forms/Front/SearchForm.php
+
+		-
+			message: '#^Undefined variable\: \$html$#'
+			identifier: variable.undefined
+			count: 1
+			path: app/Presentation/Accessory/RatingControl/RatingControl.php
+
+		-
+			message: '#^Call to an undefined method Nette\\Utils\\Image\:\:string\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Presentation/Accessory/RatingControl/RatingHelper.php
