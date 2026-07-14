@@ -2,7 +2,7 @@ name: Deploy to hosting
 
 on:
   push:
-    branches: [master]
+    branches: [master, improve]
   workflow_dispatch:
 
 jobs:
@@ -175,7 +175,12 @@ jobs:
           # connection/auth problem is visible, not just "no previous manifest".
           rm -f "$REMOTE_MANIFEST"
           FETCH_LOG=$(mktemp)
-          lftp -u "$FTP_USER","$FTP_PASSWORD" "$FTP_SERVER" <<-EOF > "$FETCH_LOG" 2>&1 || true
+          # timeout wraps the whole invocation: if the connection can't be
+          # established at all, lftp retries the *reconnect*, not just the
+          # command, and cmd:fail-exit does not stop that - seen hanging for
+          # nearly an hour retrying one file at a time once observed. This
+          # guarantees the step fails within a bounded time regardless.
+          timeout 60 lftp -u "$FTP_USER","$FTP_PASSWORD" "$FTP_SERVER" <<-EOF > "$FETCH_LOG" 2>&1 || true
           $LFTP_CONNECT_SCRIPT
           debug 3
           get "$REMOTE_DIR/$MANIFEST_NAME" -o "$REMOTE_MANIFEST"
@@ -236,5 +241,8 @@ jobs:
             echo "bye"
           } > "$LFTP_SYNC_SCRIPT"
 
-          lftp -u "$FTP_USER","$FTP_PASSWORD" "$FTP_SERVER" < "$LFTP_SYNC_SCRIPT"
+          # Generous bound (a full 1200+ file upload legitimately takes a
+          # few minutes) but still a hard ceiling - see the timeout note on
+          # the fetch step above for why this can't be left unbounded.
+          timeout 600 lftp -u "$FTP_USER","$FTP_PASSWORD" "$FTP_SERVER" < "$LFTP_SYNC_SCRIPT"
           echo "Deploy complete."
