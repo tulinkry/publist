@@ -177,6 +177,7 @@ jobs:
           FETCH_LOG=$(mktemp)
           lftp -u "$FTP_USER","$FTP_PASSWORD" "$FTP_SERVER" <<-EOF > "$FETCH_LOG" 2>&1 || true
           $LFTP_CONNECT_SCRIPT
+          debug 3
           get "$REMOTE_DIR/$MANIFEST_NAME" -o "$REMOTE_MANIFEST"
           bye
           EOF
