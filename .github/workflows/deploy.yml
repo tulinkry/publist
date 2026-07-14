@@ -130,12 +130,15 @@ jobs:
           MANIFEST_NAME: .deploy-manifest.sha256
         run: |
           LFTP_CONNECT_SCRIPT='
-          # Fail fast on a broken connection instead of retrying every file.
+          # Fail fast on a broken connection instead of retrying every file,
+          # but tolerate one real transient hiccup (seen fetching the
+          # manifest itself - a real, existing, 140KB+ file, unlike the
+          # small per-file transfers) before giving up.
           set cmd:fail-exit yes
-          set net:max-retries 2
-          set net:reconnect-interval-base 3
-          set net:reconnect-interval-max 3
-          set net:timeout 15
+          set net:max-retries 3
+          set net:reconnect-interval-base 5
+          set net:reconnect-interval-max 10
+          set net:timeout 30
           set ftp:passive-mode true
           set ftp:ssl-force true
           set ftp:ssl-protect-data true
