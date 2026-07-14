@@ -130,6 +130,7 @@ jobs:
           MANIFEST_NAME: .deploy-manifest.sha256
         run: |
           LFTP_CONNECT_SCRIPT='
+          debug 3
           # Fail fast on a broken connection instead of retrying every file,
           # but tolerate one real transient hiccup (seen fetching the
           # manifest itself - a real, existing, 140KB+ file, unlike the
@@ -145,6 +146,36 @@ jobs:
           set ssl:verify-certificate yes
           set ssl:check-hostname no
           '
+
+          # The host's FTP connection fails outright (timeout before login)
+          # intermittently - wait for it to become reachable with a cheap
+          # probe command before attempting the real deploy, rather than
+          # wrapping the whole deploy in retries.
+          PROBE_ATTEMPTS=10
+          for attempt in $(seq 1 "$PROBE_ATTEMPTS"); do
+            echo "Checking FTP server reachability (attempt $attempt/$PROBE_ATTEMPTS)..."
+            if timeout 20 lftp -u "$FTP_USER","$FTP_PASSWORD" "$FTP_SERVER" <<-EOF > /dev/null 2>&1
+          set cmd:fail-exit yes
+          set ftp:passive-mode true
+          set ftp:ssl-force true
+          set ftp:ssl-protect-data true
+          set ssl:verify-certificate yes
+          set ssl:check-hostname no
+          set net:timeout 15
+          set net:max-retries 1
+          ls
+          bye
+          EOF
+            then
+              echo "Server reachable."
+              break
+            fi
+            if [ "$attempt" -eq "$PROBE_ATTEMPTS" ]; then
+              echo "Server unreachable after $PROBE_ATTEMPTS attempts - giving up."
+              exit 1
+            fi
+            sleep 5
+          done
 
           LOCAL_MANIFEST=$(mktemp)
           REMOTE_MANIFEST=$(mktemp)
@@ -171,25 +202,30 @@ jobs:
             | sed 's#  \./#  #' \
             > "$LOCAL_MANIFEST"
 
-          # 2. Fetch the manifest from previous deploy - stderr kept so a real
-          # connection/auth problem is visible, not just "no previous manifest".
+          # 2. Fetch the manifest from previous deploy - stderr kept so a
+          # real connection/auth problem is visible, not just "no previous
+          # manifest".
           rm -f "$REMOTE_MANIFEST"
           FETCH_LOG=$(mktemp)
-          # timeout wraps the whole invocation: if the connection can't be
-          # established at all, lftp retries the *reconnect*, not just the
-          # command, and cmd:fail-exit does not stop that - seen hanging for
-          # nearly an hour retrying one file at a time once observed. This
-          # guarantees the step fails within a bounded time regardless.
           timeout 60 lftp -u "$FTP_USER","$FTP_PASSWORD" "$FTP_SERVER" <<-EOF > "$FETCH_LOG" 2>&1 || true
           $LFTP_CONNECT_SCRIPT
-          debug 3
           get "$REMOTE_DIR/$MANIFEST_NAME" -o "$REMOTE_MANIFEST"
           bye
           EOF
           if [ -s "$REMOTE_MANIFEST" ]; then
             echo "Found previous manifest: $(wc -l < "$REMOTE_MANIFEST" | tr -d ' ') entries"
+          elif grep -qE 'Timeout|Connection (refused|reset)|Network is unreachable' "$FETCH_LOG" 2>/dev/null; then
+            # A connection-level failure here (not just "no such file") means
+            # the connection is bad *right now* - abort immediately instead
+            # of proceeding to the much longer upload, which the probe above
+            # already demonstrated is no guarantee against (it can pass while
+            # this very next connection still fails).
+            echo "Manifest fetch failed with a connection-level error, not just a missing file - aborting before attempting the upload:"
+            cat "$FETCH_LOG"
+            rm -f "$FETCH_LOG"
+            exit 1
           else
-            echo "No previous manifest found (first deploy, or fetch failed):"
+            echo "No previous manifest found (first deploy, or a non-connection fetch failure):"
             cat "$FETCH_LOG"
           fi
           touch "$REMOTE_MANIFEST"
@@ -242,7 +278,7 @@ jobs:
           } > "$LFTP_SYNC_SCRIPT"
 
           # Generous bound (a full 1200+ file upload legitimately takes a
-          # few minutes) but still a hard ceiling - see the timeout note on
-          # the fetch step above for why this can't be left unbounded.
-          timeout 600 lftp -u "$FTP_USER","$FTP_PASSWORD" "$FTP_SERVER" < "$LFTP_SYNC_SCRIPT"
+          # few minutes) but still a hard ceiling, in case the connection
+          # drops mid-upload despite the probe above having succeeded.
+          timeout 300 lftp -u "$FTP_USER","$FTP_PASSWORD" "$FTP_SERVER" < "$LFTP_SYNC_SCRIPT"
           echo "Deploy complete."
