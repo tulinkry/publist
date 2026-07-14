@@ -152,25 +152,39 @@ jobs:
 
           # 1. Hash every file that should actually be deployed.
           find . -type f \
-            ! -path './.git/*' ! -name '.gitignore' ! -name '.gitattributes' \
+            ! -path './.git/*' \
+            ! -name '.gitignore' \
+            ! -name '.gitattributes' \
             ! -path './.github/*' \
             ! -path './node_modules/*' \
             ! -path './tests/*' \
-            ! -name 'README.md' ! -name 'CLAUDE.md' \
-            ! -name 'Dockerfile' ! -name 'docker-compose.yml' ! -name '.dockerignore' \
+            ! -name 'README.md' \
+            ! -name 'CLAUDE.md' \
+            ! -name 'Dockerfile' \
+            ! -name 'docker-compose.yml' \
+            ! -name '.dockerignore' \
             -print0 \
             | xargs -0 sha256sum \
             | sed 's#  \./#  #' \
             > "$LOCAL_MANIFEST"
 
-          # 2. Fetch the manifest from previous deploy
+          # 2. Fetch the manifest from previous deploy - stderr kept so a real
+          # connection/auth problem is visible, not just "no previous manifest".
           rm -f "$REMOTE_MANIFEST"
-          lftp -u "$FTP_USER","$FTP_PASSWORD" "$FTP_SERVER" <<-EOF 2>/dev/null || true
+          FETCH_LOG=$(mktemp)
+          lftp -u "$FTP_USER","$FTP_PASSWORD" "$FTP_SERVER" <<-EOF > "$FETCH_LOG" 2>&1 || true
           $LFTP_CONNECT_SCRIPT
           get "$REMOTE_DIR/$MANIFEST_NAME" -o "$REMOTE_MANIFEST"
           bye
           EOF
+          if [ -s "$REMOTE_MANIFEST" ]; then
+            echo "Found previous manifest: $(wc -l < "$REMOTE_MANIFEST" | tr -d ' ') entries"
+          else
+            echo "No previous manifest found (first deploy, or fetch failed):"
+            cat "$FETCH_LOG"
+          fi
           touch "$REMOTE_MANIFEST"
+          rm -f "$FETCH_LOG"
 
           # 3. Diff
           grep -Fxvf "$REMOTE_MANIFEST" "$LOCAL_MANIFEST" > "$CHANGED" || true
@@ -184,25 +198,39 @@ jobs:
 
           echo "$(wc -l < "$CHANGED" | tr -d ' ') file(s) changed/new, $(wc -l < "$REMOVED" | tr -d ' ') file(s) removed"
 
-          # 4. Build one lftp script: mkdir -p + put per changed file, rm per
-          # removed file, then upload the fresh manifest so the next deploy
-          # diffs against this one.
+          # 4. Build one lftp script. Directories are created first, one at a
+          # time, *before* switching to parallel transfers - doing mkdir and
+          # put for the same new directory both under cmd:parallel is a real
+          # race (a put can run before its own directory's mkdir finishes),
+          # which was observed to spuriously trigger cmd:fail-exit and abort
+          # the whole deploy after a single file. Puts/removes run in
+          # parallel since they're otherwise fully independent - sequential
+          # one-file-at-a-time transfers are what made a large first deploy
+          # far slower here than the old mirror --parallel=3 ever was.
           {
             echo "$LFTP_CONNECT_SCRIPT"
+            awk '{print $2}' "$CHANGED" | while IFS= read -r path; do dirname "$path"; done | sort -u | while IFS= read -r dir; do
+              [ "$dir" != "." ] && echo "mkdir -p -f \"$REMOTE_DIR/$dir\""
+            done
+
+            echo "set cmd:parallel 5"
             while IFS= read -r line; do
               path="${line#*  }"
-              dir="$(dirname "$path")"
-              [ "$dir" != "." ] && echo "mkdir -p -f \"$REMOTE_DIR/$dir\""
+              echo "!echo UPLOADING: $path"
               echo "put \"$path\" -o \"$REMOTE_DIR/$path\""
             done < "$CHANGED"
 
             while IFS= read -r path; do
               [ -z "$path" ] && continue
+              echo "!echo REMOVING: $path"
               echo "rm -f \"$REMOTE_DIR/$path\""
             done < "$REMOVED"
 
+            echo "set cmd:parallel 1"
+            echo "!echo UPLOADING MANIFEST"
             echo "put \"$LOCAL_MANIFEST\" -o \"$REMOTE_DIR/$MANIFEST_NAME\""
             echo "bye"
           } > "$LFTP_SYNC_SCRIPT"
 
           lftp -u "$FTP_USER","$FTP_PASSWORD" "$FTP_SERVER" < "$LFTP_SYNC_SCRIPT"
+          echo "Deploy complete."
