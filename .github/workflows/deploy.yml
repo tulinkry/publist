@@ -92,11 +92,8 @@ jobs:
             exit 1
           fi
 
-      # The smoke test just wrote real cache/session files under temp/ and
-      # log/ - wipe them back to empty (keeping the tracked .gitignore
-      # placeholders) before upload. Two passes: files first, then only
-      # now-empty dirs, since a single `find ... -delete` errors on a dir
-      # that still contains its preserved .gitignore.
+      # Two passes: files first, then empty dirs - a single pass errors on a
+      # dir still containing its preserved .gitignore.
       - name: Reset temp/ and log/ after the smoke test
         run: |
           find temp log www/tmp -type f -not -name '.gitignore' -delete
@@ -121,38 +118,91 @@ jobs:
       - name: Install lftp
         run: sudo apt-get update && sudo apt-get install -y lftp
 
-      # Runs lftp directly instead of a third-party deploy action - no
-      # external Action to trust with production FTP credentials, and lftp's
-      # mirror does its own remote listing + only uploads changed files,
-      # which is what actually fixes the previous action's ~10-minute
-      # timeouts uploading vendor/'s many small files on every single push.
+      # Runs lftp directly (no third-party deploy action) and uploads only
+      # real deltas via a content-hash manifest, since mtime-based comparison
+      # can't work when every CI checkout resets file mtimes.
       - name: Deploy over FTPS
         env:
           FTP_SERVER: ${{ secrets.FTP_SERVER }}
           FTP_USER: ${{ secrets.FTP_USER }}
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+          REMOTE_DIR: /public_html
+          MANIFEST_NAME: .deploy-manifest.sha256
         run: |
-          lftp -u "$FTP_USER","$FTP_PASSWORD" "$FTP_SERVER" <<-'EOF'
-          set net:max-retries 5
-          set net:reconnect-interval-base 5
-          set net:timeout 30
+          LFTP_CONNECT_SCRIPT='
+          # Fail fast on a broken connection instead of retrying every file.
+          set cmd:fail-exit yes
+          set net:max-retries 2
+          set net:reconnect-interval-base 3
+          set net:reconnect-interval-max 3
+          set net:timeout 15
           set ftp:passive-mode true
           set ftp:ssl-force true
           set ftp:ssl-protect-data true
           set ssl:verify-certificate yes
           set ssl:check-hostname no
-          mirror --reverse --verbose --parallel=3 \
-            --exclude-glob .git/ \
-            --exclude-glob .gitignore \
-            --exclude-glob .gitattributes \
-            --exclude-glob .github/ \
-            --exclude-glob node_modules/ \
-            --exclude-glob tests/ \
-            --exclude-glob README.md \
-            --exclude-glob CLAUDE.md \
-            --exclude-glob Dockerfile \
-            --exclude-glob docker-compose.yml \
-            --exclude-glob .dockerignore \
-            . /public_html/
+          '
+
+          LOCAL_MANIFEST=$(mktemp)
+          REMOTE_MANIFEST=$(mktemp)
+          CHANGED=$(mktemp)
+          REMOVED=$(mktemp)
+          LFTP_SYNC_SCRIPT=$(mktemp)
+          trap 'rm -f "$LOCAL_MANIFEST" "$REMOTE_MANIFEST" "$CHANGED" "$REMOVED" "$LFTP_SYNC_SCRIPT"' EXIT
+
+          # 1. Hash every file that should actually be deployed.
+          find . -type f \
+            ! -path './.git/*' ! -name '.gitignore' ! -name '.gitattributes' \
+            ! -path './.github/*' \
+            ! -path './node_modules/*' \
+            ! -path './tests/*' \
+            ! -name 'README.md' ! -name 'CLAUDE.md' \
+            ! -name 'Dockerfile' ! -name 'docker-compose.yml' ! -name '.dockerignore' \
+            -print0 \
+            | xargs -0 sha256sum \
+            | sed 's#  \./#  #' \
+            > "$LOCAL_MANIFEST"
+
+          # 2. Fetch the manifest from previous deploy
+          rm -f "$REMOTE_MANIFEST"
+          lftp -u "$FTP_USER","$FTP_PASSWORD" "$FTP_SERVER" <<-EOF 2>/dev/null || true
+          $LFTP_CONNECT_SCRIPT
+          get "$REMOTE_DIR/$MANIFEST_NAME" -o "$REMOTE_MANIFEST"
           bye
           EOF
+          touch "$REMOTE_MANIFEST"
+
+          # 3. Diff
+          grep -Fxvf "$REMOTE_MANIFEST" "$LOCAL_MANIFEST" > "$CHANGED" || true
+          # Paths gone locally (comm here is fine - both sides are
+          # single-column and plain-sorted, which is exactly what comm
+          # requires).
+          comm -23 \
+            <(awk '{print $2}' "$REMOTE_MANIFEST" | sort) \
+            <(awk '{print $2}' "$LOCAL_MANIFEST" | sort) \
+            > "$REMOVED"
+
+          echo "$(wc -l < "$CHANGED" | tr -d ' ') file(s) changed/new, $(wc -l < "$REMOVED" | tr -d ' ') file(s) removed"
+
+          # 4. Build one lftp script: mkdir -p + put per changed file, rm per
+          # removed file, then upload the fresh manifest so the next deploy
+          # diffs against this one.
+          {
+            echo "$LFTP_CONNECT_SCRIPT"
+            while IFS= read -r line; do
+              path="${line#*  }"
+              dir="$(dirname "$path")"
+              [ "$dir" != "." ] && echo "mkdir -p -f \"$REMOTE_DIR/$dir\""
+              echo "put \"$path\" -o \"$REMOTE_DIR/$path\""
+            done < "$CHANGED"
+
+            while IFS= read -r path; do
+              [ -z "$path" ] && continue
+              echo "rm -f \"$REMOTE_DIR/$path\""
+            done < "$REMOVED"
+
+            echo "put \"$LOCAL_MANIFEST\" -o \"$REMOTE_DIR/$MANIFEST_NAME\""
+            echo "bye"
+          } > "$LFTP_SYNC_SCRIPT"
+
+          lftp -u "$FTP_USER","$FTP_PASSWORD" "$FTP_SERVER" < "$LFTP_SYNC_SCRIPT"
