@@ -161,10 +161,16 @@ jobs:
           PROBE_ATTEMPTS=10
           for attempt in $(seq 1 "$PROBE_ATTEMPTS"); do
             echo "Checking SFTP server reachability (attempt $attempt/$PROBE_ATTEMPTS)..."
-            if run_sftp_batch 20 "$PROBE_BATCH" > /dev/null 2>&1; then
+            PROBE_LOG=$(mktemp)
+            if run_sftp_batch 20 "$PROBE_BATCH" > "$PROBE_LOG" 2>&1; then
               echo "Server reachable."
+              rm -f "$PROBE_LOG"
               break
             fi
+            # Temporary: show the actual sftp/ssh output while diagnosing
+            # the very first real run against this host.
+            cat "$PROBE_LOG"
+            rm -f "$PROBE_LOG"
             if [ "$attempt" -eq "$PROBE_ATTEMPTS" ]; then
               echo "Server unreachable after $PROBE_ATTEMPTS attempts - giving up."
               exit 1
