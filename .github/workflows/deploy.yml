@@ -115,58 +115,53 @@ jobs:
           EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
         run: php bin/write-config-local.php
 
-      - name: Install lftp
-        run: sudo apt-get update && sudo apt-get install -y lftp
-
-      # Runs lftp directly (no third-party deploy action) and uploads only
-      # real deltas via a content-hash manifest, since mtime-based comparison
-      # can't work when every CI checkout resets file mtimes.
-      - name: Deploy over FTPS
+      # lftp's sftp:// support unconditionally allocates a pseudo-tty to
+      # talk to its ssh subprocess (confirmed with upstream - no way to
+      # disable it), which fails in the GH Actions runner's non-interactive
+      # shell. The native openssh sftp client needs no pty at all, so it
+      # replaces lftp entirely for the actual transfer.
+      - name: Deploy over SFTP
         env:
           FTP_SERVER: ${{ secrets.FTP_SERVER }}
           FTP_USER: ${{ secrets.FTP_USER }}
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+          SFTP_PORT: 222
           REMOTE_DIR: /public_html
           MANIFEST_NAME: .deploy-manifest.sha256
         run: |
-          LFTP_CONNECT_SCRIPT='
-          debug 3
-          # Fail fast on a broken connection instead of retrying every file,
-          # but tolerate one real transient hiccup (seen fetching the
-          # manifest itself - a real, existing, 140KB+ file, unlike the
-          # small per-file transfers) before giving up.
-          set cmd:fail-exit yes
-          set net:max-retries 3
-          set net:reconnect-interval-base 5
-          set net:reconnect-interval-max 10
-          set net:timeout 30
-          set ftp:passive-mode true
-          set ftp:ssl-force true
-          set ftp:ssl-protect-data true
-          set ssl:verify-certificate yes
-          set ssl:check-hostname no
-          '
+          # SSH_ASKPASS_REQUIRE=force makes ssh call this helper for the
+          # password instead of prompting on a tty - the only way to do
+          # non-interactive password auth without one.
+          ASKPASS_SCRIPT=$(mktemp)
+          cat > "$ASKPASS_SCRIPT" <<'EOF'
+          #!/bin/sh
+          echo "$FTP_PASSWORD"
+          EOF
+          chmod +x "$ASKPASS_SCRIPT"
+          export SSH_ASKPASS="$ASKPASS_SCRIPT"
+          export SSH_ASKPASS_REQUIRE=force
 
-          # The host's FTP connection fails outright (timeout before login)
+          SFTP_OPTS=(-oBatchMode=no -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oConnectTimeout=15 -P "$SFTP_PORT")
+
+          # Runs one batch file over its own fresh SSH connection. sftp's
+          # own exit code already distinguishes failure kinds cleanly: 255
+          # is an ssh/connection-level failure (refused/timeout/reset), a
+          # lower code is a genuine sftp-protocol error (e.g. a missing
+          # file) - no log-scraping needed, unlike the old FTP version.
+          run_sftp_batch() {
+            timeout "$1" sftp "${SFTP_OPTS[@]}" -b "$2" "$FTP_USER@$FTP_SERVER" < /dev/null
+          }
+
+          # The host's connection fails outright (timeout before login)
           # intermittently - wait for it to become reachable with a cheap
           # probe command before attempting the real deploy, rather than
           # wrapping the whole deploy in retries.
+          PROBE_BATCH=$(mktemp)
+          echo "ls" > "$PROBE_BATCH"
           PROBE_ATTEMPTS=10
           for attempt in $(seq 1 "$PROBE_ATTEMPTS"); do
-            echo "Checking FTP server reachability (attempt $attempt/$PROBE_ATTEMPTS)..."
-            if timeout 20 lftp -u "$FTP_USER","$FTP_PASSWORD" "$FTP_SERVER" <<-EOF > /dev/null 2>&1
-          set cmd:fail-exit yes
-          set ftp:passive-mode true
-          set ftp:ssl-force true
-          set ftp:ssl-protect-data true
-          set ssl:verify-certificate yes
-          set ssl:check-hostname no
-          set net:timeout 15
-          set net:max-retries 1
-          ls
-          bye
-          EOF
-            then
+            echo "Checking SFTP server reachability (attempt $attempt/$PROBE_ATTEMPTS)..."
+            if run_sftp_batch 20 "$PROBE_BATCH" > /dev/null 2>&1; then
               echo "Server reachable."
               break
             fi
@@ -176,13 +171,15 @@ jobs:
             fi
             sleep 5
           done
+          rm -f "$PROBE_BATCH"
 
           LOCAL_MANIFEST=$(mktemp)
           REMOTE_MANIFEST=$(mktemp)
           CHANGED=$(mktemp)
           REMOVED=$(mktemp)
-          LFTP_SYNC_SCRIPT=$(mktemp)
-          trap 'rm -f "$LOCAL_MANIFEST" "$REMOTE_MANIFEST" "$CHANGED" "$REMOVED" "$LFTP_SYNC_SCRIPT"' EXIT
+          MKDIR_BATCH=$(mktemp)
+          REMOVE_BATCH=$(mktemp)
+          trap 'rm -f "$ASKPASS_SCRIPT" "$LOCAL_MANIFEST" "$REMOTE_MANIFEST" "$CHANGED" "$REMOVED" "$MKDIR_BATCH" "$REMOVE_BATCH"' EXIT
 
           # 1. Hash every file that should actually be deployed.
           find . -type f \
@@ -202,30 +199,27 @@ jobs:
             | sed 's#  \./#  #' \
             > "$LOCAL_MANIFEST"
 
-          # 2. Fetch the manifest from previous deploy - stderr kept so a
-          # real connection/auth problem is visible, not just "no previous
-          # manifest".
-          rm -f "$REMOTE_MANIFEST"
+          # 2. Fetch the manifest from previous deploy.
+          FETCH_BATCH=$(mktemp)
+          echo "get \"$REMOTE_DIR/$MANIFEST_NAME\" \"$REMOTE_MANIFEST\"" > "$FETCH_BATCH"
           FETCH_LOG=$(mktemp)
-          timeout 60 lftp -u "$FTP_USER","$FTP_PASSWORD" "$FTP_SERVER" <<-EOF > "$FETCH_LOG" 2>&1 || true
-          $LFTP_CONNECT_SCRIPT
-          get "$REMOTE_DIR/$MANIFEST_NAME" -o "$REMOTE_MANIFEST"
-          bye
-          EOF
+          run_sftp_batch 60 "$FETCH_BATCH" > "$FETCH_LOG" 2>&1
+          FETCH_EXIT=$?
+          rm -f "$FETCH_BATCH"
           if [ -s "$REMOTE_MANIFEST" ]; then
             echo "Found previous manifest: $(wc -l < "$REMOTE_MANIFEST" | tr -d ' ') entries"
-          elif grep -qE 'Timeout|Connection (refused|reset)|Network is unreachable' "$FETCH_LOG" 2>/dev/null; then
-            # A connection-level failure here (not just "no such file") means
-            # the connection is bad *right now* - abort immediately instead
-            # of proceeding to the much longer upload, which the probe above
-            # already demonstrated is no guarantee against (it can pass while
-            # this very next connection still fails).
-            echo "Manifest fetch failed with a connection-level error, not just a missing file - aborting before attempting the upload:"
+          elif [ "$FETCH_EXIT" -eq 255 ]; then
+            # exit 255 is ssh's own connection-level failure code - the
+            # connection is bad *right now*, so abort immediately instead
+            # of proceeding to the much longer upload, which the probe
+            # above already demonstrated is no guarantee against (it can
+            # pass while this very next connection still fails).
+            echo "Manifest fetch failed with a connection-level error (ssh exit 255), not just a missing file - aborting before attempting the upload:"
             cat "$FETCH_LOG"
             rm -f "$FETCH_LOG"
             exit 1
           else
-            echo "No previous manifest found (first deploy, or a non-connection fetch failure):"
+            echo "No previous manifest found (first deploy, or a non-connection fetch failure, exit $FETCH_EXIT):"
             cat "$FETCH_LOG"
           fi
           touch "$REMOTE_MANIFEST"
@@ -241,44 +235,75 @@ jobs:
             <(awk '{print $2}' "$LOCAL_MANIFEST" | sort) \
             > "$REMOVED"
 
-          echo "$(wc -l < "$CHANGED" | tr -d ' ') file(s) changed/new, $(wc -l < "$REMOVED" | tr -d ' ') file(s) removed"
+          CHANGED_COUNT=$(wc -l < "$CHANGED" | tr -d ' ')
+          REMOVED_COUNT=$(wc -l < "$REMOVED" | tr -d ' ')
+          echo "$CHANGED_COUNT file(s) changed/new, $REMOVED_COUNT file(s) removed"
 
-          # 4. Build one lftp script. Directories are created first, one at a
-          # time, *before* switching to parallel transfers - doing mkdir and
-          # put for the same new directory both under cmd:parallel is a real
-          # race (a put can run before its own directory's mkdir finishes),
-          # which was observed to spuriously trigger cmd:fail-exit and abort
-          # the whole deploy after a single file. Puts/removes run in
-          # parallel since they're otherwise fully independent - sequential
-          # one-file-at-a-time transfers are what made a large first deploy
-          # far slower here than the old mirror --parallel=3 ever was.
-          {
-            echo "$LFTP_CONNECT_SCRIPT"
-            awk '{print $2}' "$CHANGED" | while IFS= read -r path; do dirname "$path"; done | sort -u | while IFS= read -r dir; do
-              [ "$dir" != "." ] && echo "mkdir -p -f \"$REMOTE_DIR/$dir\""
+          # 4. Create every ancestor directory the changed files need, one
+          # at a time in a single connection, shallowest first - sftp's own
+          # mkdir isn't recursive, and doing this before the parallel
+          # upload batches avoids a mkdir/put race across connections.
+          # "-mkdir" (dash prefix) tolerates a directory that already
+          # exists instead of aborting the batch.
+          awk '{print $2}' "$CHANGED" | while IFS= read -r path; do
+            d=$(dirname "$path")
+            while [ "$d" != "." ]; do
+              echo "$d"
+              d=$(dirname "$d")
             done
+          done | sort -u | awk -F/ '{print NF-1, $0}' | sort -n | cut -d' ' -f2- | while IFS= read -r dir; do
+            echo "-mkdir \"$REMOTE_DIR/$dir\""
+          done > "$MKDIR_BATCH"
+          if [ -s "$MKDIR_BATCH" ]; then
+            run_sftp_batch 60 "$MKDIR_BATCH"
+          fi
 
-            echo "set cmd:parallel 5"
-            while IFS= read -r line; do
-              path="${line#*  }"
-              echo "!echo UPLOADING: $path"
-              echo "put \"$path\" -o \"$REMOTE_DIR/$path\""
-            done < "$CHANGED"
+          # 5. Upload changed files and delete removed ones. Each chunk is
+          # its own SSH connection running in the background - sftp has no
+          # equivalent of lftp's cmd:parallel within one connection, so
+          # this splits the changed-file list across a handful of
+          # concurrent connections instead. "-rm" tolerates a file that's
+          # already gone.
+          N_PARALLEL=5
+          [ "$CHANGED_COUNT" -lt "$N_PARALLEL" ] && N_PARALLEL=$CHANGED_COUNT
 
-            while IFS= read -r path; do
-              [ -z "$path" ] && continue
-              echo "!echo REMOVING: $path"
-              echo "rm -f \"$REMOTE_DIR/$path\""
-            done < "$REMOVED"
+          UPLOAD_BATCH_PREFIX=$(mktemp -u)
+          if [ "$N_PARALLEL" -gt 0 ]; then
+            awk -v n="$N_PARALLEL" -v prefix="$UPLOAD_BATCH_PREFIX" \
+              '{ path = $0; sub(/^[^ ]+  /, "", path); print "put \"" path "\" \"" ENVIRON["REMOTE_DIR"] "/" path "\"" > (prefix "." (NR % n)) }' \
+              "$CHANGED"
+          fi
 
-            echo "set cmd:parallel 1"
-            echo "!echo UPLOADING MANIFEST"
-            echo "put \"$LOCAL_MANIFEST\" -o \"$REMOTE_DIR/$MANIFEST_NAME\""
-            echo "bye"
-          } > "$LFTP_SYNC_SCRIPT"
+          [ -s "$REMOVED" ] && while IFS= read -r path; do
+            [ -z "$path" ] && continue
+            echo "-rm \"$REMOTE_DIR/$path\""
+          done < "$REMOVED" > "$REMOVE_BATCH"
 
-          # Generous bound (a full 1200+ file upload legitimately takes a
-          # few minutes) but still a hard ceiling, in case the connection
-          # drops mid-upload despite the probe above having succeeded.
-          timeout 300 lftp -u "$FTP_USER","$FTP_PASSWORD" "$FTP_SERVER" < "$LFTP_SYNC_SCRIPT"
+          PIDS=()
+          for i in $(seq 0 $((N_PARALLEL - 1))); do
+            chunk="$UPLOAD_BATCH_PREFIX.$i"
+            [ -s "$chunk" ] || continue
+            run_sftp_batch 280 "$chunk" &
+            PIDS+=($!)
+          done
+          if [ -s "$REMOVE_BATCH" ]; then
+            run_sftp_batch 280 "$REMOVE_BATCH" &
+            PIDS+=($!)
+          fi
+          FAILED=0
+          for pid in "${PIDS[@]}"; do
+            wait "$pid" || FAILED=1
+          done
+          rm -f "$UPLOAD_BATCH_PREFIX".*
+          if [ "$FAILED" -eq 1 ]; then
+            echo "One or more upload/remove batches failed."
+            exit 1
+          fi
+
+          # 6. Manifest goes last, once every real file above has landed.
+          MANIFEST_BATCH=$(mktemp)
+          echo "put \"$LOCAL_MANIFEST\" \"$REMOTE_DIR/$MANIFEST_NAME\"" > "$MANIFEST_BATCH"
+          run_sftp_batch 60 "$MANIFEST_BATCH"
+          rm -f "$MANIFEST_BATCH"
+
           echo "Deploy complete."
